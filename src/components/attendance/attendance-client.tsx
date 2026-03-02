@@ -1,18 +1,18 @@
 // src/components/attendance/attendance-client.tsx
 "use client";
 
-import { useState, useTransition } from "react";
-import { useMemo } from "react";
-import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
-import { CheckCircle2, XCircle, Clock, AlertCircle, Users, Printer } from "lucide-react";
-import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { markAttendance, getAttendanceForClass } from "@/server/actions/attendance";
+import { convertToCSV, downloadCSV } from "@/lib/csv-export";
 import { useGovtPrimaryT, useT } from "@/lib/i18n/client";
+import { exportAttendanceRegisterToCSV, getAttendanceForClass, markAttendance } from "@/server/actions/attendance";
+import { AlertCircle, CheckCircle2, Clock, Download, Printer, Users, XCircle } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
+import { toast } from "sonner";
 
 type ClassRow = { id: string; name: string; grade: string; section: string };
 type Summary = { total: number; present: number; absent: number; late: number; excused: number; presentRate: number };
@@ -128,15 +128,26 @@ export function AttendanceClient({ classes, selectedClassId, selectedDate, summa
     };
 
     const handleSubmit = () => {
-        if (!students.length) return;
+        if (!students.length) {
+            toast.error("No students available for this class. Add students first.");
+            return;
+        }
         startTransition(async () => {
             const res = await markAttendance({
                 classId,
                 date,
                 entries: students.map(s => ({ studentId: s.id, status: attendanceMap[s.id] ?? "PRESENT" })),
             });
-            if (res.success) toast.success("Attendance saved");
-            else toast.error(res.error);
+            if (res.success) {
+                toast.success(`Attendance saved for ${students.length} students`);
+            } else {
+                toast.error(res.error || "Failed to save attendance");
+                if (res.fieldErrors) {
+                    Object.entries(res.fieldErrors).forEach(([field, messages]) => {
+                        toast.error(`${field}: ${messages.join(", ")}`);
+                    });
+                }
+            }
         });
     };
 
@@ -148,6 +159,45 @@ export function AttendanceClient({ classes, selectedClassId, selectedDate, summa
 
         const url = `/dashboard/attendance/print?classId=${encodeURIComponent(classId)}&date=${encodeURIComponent(date)}`;
         window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    const handleExportCSV = () => {
+        if (!classId || !date) {
+            toast.error("Select class and date first");
+            return;
+        }
+
+        startTransition(async () => {
+            try {
+                const result = await exportAttendanceRegisterToCSV({ classId, date });
+                if (!result.success || !result.data) {
+                    toast.error(result.error || "Failed to export attendance");
+                    return;
+                }
+
+                const headers = [
+                    "rolNo",
+                    "studentId",
+                    "firstName",
+                    "lastName",
+                    "status",
+                ] as const;
+                const headerLabels = [
+                    "Roll No",
+                    "Student ID",
+                    "First Name",
+                    "Last Name",
+                    "Status",
+                ];
+
+                const csv = convertToCSV(result.data, headers, headerLabels);
+                const timestamp = new Date().toISOString().slice(0, 10);
+                downloadCSV(csv, `attendance_${timestamp}.csv`);
+                toast.success(`Exported ${result.data.length} records`);
+            } catch (error) {
+                toast.error(error instanceof Error ? error.message : "Export failed");
+            }
+        });
     };
 
     const stats = [
@@ -235,6 +285,13 @@ export function AttendanceClient({ classes, selectedClassId, selectedDate, summa
                 </div>
             </div>
 
+            {!loaded && (
+                <div className="rounded-xl border border-dashed border-border p-12 text-center">
+                    <Users className="mx-auto h-12 w-12 text-muted-foreground/50 mb-3" />
+                    <p className="text-sm text-muted-foreground">Select a class and date, then click "Students" to load attendance records</p>
+                </div>
+            )}
+
             {loaded && students.length > 0 && (
                 <div className="rounded-xl border border-border bg-card overflow-hidden">
                     <div className="flex flex-col gap-3 p-4 border-b border-border sm:flex-row sm:items-center sm:justify-between">
@@ -247,6 +304,10 @@ export function AttendanceClient({ classes, selectedClassId, selectedDate, summa
                             ))}
                             <Button size="sm" onClick={handleSubmit} disabled={pending}>
                                 {pending ? "Saving..." : "Save Attendance"}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={handleExportCSV} disabled={pending} className="no-print">
+                                <Download className="h-3.5 w-3.5 mr-1.5" />
+                                Export CSV
                             </Button>
                             <Button variant="outline" size="sm" onClick={openPrintView} className="no-print">
                                 <Printer className="h-3.5 w-3.5 mr-1.5" />
@@ -295,8 +356,22 @@ export function AttendanceClient({ classes, selectedClassId, selectedDate, summa
             )}
 
             {loaded && students.length === 0 && (
-                <div className="rounded-xl border border-dashed border-border p-12 text-center text-muted-foreground">
-                    No active students found in this class.
+                <div className="rounded-xl border border-dashed border-border p-12 text-center">
+                    <Users className="mx-auto h-12 w-12 text-muted-foreground/50 mb-3" />
+                    <p className="font-medium text-foreground mb-1">No students found</p>
+                    <p className="text-sm text-muted-foreground mb-4">This class has no active students. Add students first to mark attendance.</p>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                            const newParams = new URLSearchParams(searchParams.toString());
+                            newParams.delete("classId");
+                            newParams.delete("date");
+                            router.push(`/dashboard/students?${newParams.toString()}`);
+                        }}
+                    >
+                        Go to Students
+                    </Button>
                 </div>
             )}
         </>

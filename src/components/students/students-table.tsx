@@ -1,25 +1,26 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Edit3, Plus, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { formatDate } from "@/lib/utils";
-import { setStudentStatus } from "@/server/actions/students";
-import { showMacDeleteToast, showMacStatusToast } from "@/components/ui/macos-toast";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useT } from "@/lib/i18n/client";
+import { showMacDeleteToast, showMacStatusToast } from "@/components/ui/macos-toast";
 import { isGovtPrimaryModeEnabled } from "@/lib/config";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { convertToCSV, downloadCSV } from "@/lib/csv-export";
+import { useT } from "@/lib/i18n/client";
+import { formatDate } from "@/lib/utils";
+import { exportStudentsToCSV, setStudentStatus } from "@/server/actions/students";
+import { Edit3, Plus, ToggleLeft, ToggleRight, Trash2, Download } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
+import { toast } from "sonner";
 
 type Student = {
   id: string;
@@ -189,7 +190,9 @@ export function StudentsTable({ students, classes, total, pages, currentPage }: 
   const [pending, startTransition] = useTransition();
   const [createOpen, setCreateOpen] = useState(false);
   const [creating, setCreating] = useState<CreateState>(getInitialCreateState());
+  const [createErrors, setCreateErrors] = useState<Record<string, string>>({});
   const [editing, setEditing] = useState<EditState | null>(null);
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
 
   const classOptions = useMemo(
     () =>
@@ -494,6 +497,50 @@ export function StudentsTable({ students, classes, total, pages, currentPage }: 
     });
   }
 
+  async function handleExportCSV() {
+    startTransition(async () => {
+      try {
+        const result = await exportStudentsToCSV({});
+        if (!result.success || !result.data) {
+          toast.error(result.error || "Failed to export students");
+          return;
+        }
+
+        const headers = [
+          "studentId",
+          "firstName",
+          "lastName",
+          "email",
+          "phone",
+          "dateOfBirth",
+          "gender",
+          "class",
+          "status",
+          "joinedDate",
+        ] as const;
+        const headerLabels = [
+          "Student ID",
+          "First Name",
+          "Last Name",
+          "Email",
+          "Phone",
+          "Date of Birth",
+          "Gender",
+          "Class",
+          "Status",
+          "Joined Date",
+        ];
+
+        const csv = convertToCSV(result.data, headers, headerLabels);
+        const timestamp = new Date().toISOString().slice(0, 10);
+        downloadCSV(csv, `students_${timestamp}.csv`);
+        toast.success(`Exported ${result.data.length} students`);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Export failed");
+      }
+    });
+  }
+
   return (
     <section className="rounded-lg border border-border bg-card p-4">
       <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -501,10 +548,16 @@ export function StudentsTable({ students, classes, total, pages, currentPage }: 
           <p className="text-sm text-muted-foreground">Showing {students.length} of {total}</p>
           <p className="text-sm text-muted-foreground">Page {currentPage} / {Math.max(pages, 1)}</p>
         </div>
-        <Button type="button" size="sm" onClick={() => setCreateOpen(true)} disabled={pending}>
-          <Plus className="mr-1.5 h-4 w-4" />
-          Add Student
-        </Button>
+        <div className="flex gap-2">
+          <Button type="button" size="sm" onClick={handleExportCSV} disabled={pending || students.length === 0} variant="outline">
+            <Download className="mr-1.5 h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button type="button" size="sm" onClick={() => setCreateOpen(true)} disabled={pending}>
+            <Plus className="mr-1.5 h-4 w-4" />
+            Add Student
+          </Button>
+        </div>
       </div>
       <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
         <table className="table-dense w-full min-w-[760px] text-left text-sm">

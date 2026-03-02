@@ -55,6 +55,9 @@ model Institution {
   accessRequests AccessRequest[]
   otpChallenges  PhoneOtpChallenge[]
   settings       InstitutionSettings?
+  exportAuditLogs ExportAuditLog[]
+  exportTokens    ExportDownloadToken[]
+  dsarRequests    DsarRequest[]
 
   @@index([slug])
   @@map("institutions")
@@ -87,6 +90,9 @@ model InstitutionSettings {
   certificateLogoUrl String?
   publicReportsEnabled     Boolean @default(false)
   publicReportsDescription String?
+
+  // Localization
+  useBanglaDigits Boolean @default(false)
 
   updatedAt DateTime @updatedAt
 
@@ -821,6 +827,74 @@ model PhoneOtpChallenge {
   @@index([institutionId, phone, createdAt])
   @@index([userId])
   @@map("phone_otp_challenges")
+}
+
+// ─────────────────────────────────────────────
+// EXPORTS
+// ─────────────────────────────────────────────
+
+model ExportAuditLog {
+  id              String      @id @default(cuid())
+  institutionId   String
+  userId          String
+  exportType      String      // "STUDENT_LIST" | "ATTENDANCE_REGISTER"
+  recordCount     Int
+  fileSize        Int
+  filters         Json?       // Stored filter parameters
+  ipAddress       String
+  userAgent       String?
+  status          String      // "SUCCESS" | "FAILED" | "PARTIAL"
+  errorReason     String?
+  createdAt       DateTime    @default(now())
+
+  institution     Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  user            User        @relation("ExportLogs", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([institutionId, createdAt])
+  @@index([userId, createdAt])
+  @@index([exportType])
+  @@map("export_audit_logs")
+}
+
+model ExportDownloadToken {
+  id              String      @id @default(cuid())
+  institutionId   String
+  userId          String
+  fileId          String      @unique
+  exportType      String      // "STUDENT_LIST" | "ATTENDANCE_REGISTER"
+  encryptedPath   String      // Encrypted file path
+  encryptedToken  String      // Encrypted token for verification
+  expiresAt       DateTime
+  usedAt          DateTime?
+  userAgent       String?
+  createdAt       DateTime    @default(now())
+
+  institution     Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  user            User        @relation("DownloadTokens", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([institutionId, expiresAt])
+  @@index([userId, createdAt])
+  @@index([fileId])
+  @@map("export_download_tokens")
+}
+
+model DsarRequest {
+  id              String      @id @default(cuid())
+  institutionId   String
+  userId          String
+  status          String      // "PENDING" | "COMPLETED" | "DENIED"
+  requestReason   String?
+  completionNotes String?
+  requestedAt     DateTime    @default(now())
+  completedAt     DateTime?
+  deletionAt      DateTime?   // When rights to be forgotten was exercised
+
+  institution     Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  user            User        @relation("DsarRequests", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([institutionId, status])
+  @@index([userId, status])
+  @@map("dsar_requests")
 }
 
 // ─────────────────────────────────────────────

@@ -2,17 +2,17 @@
 // Server Actions — Students CRUD (Next.js 16 Server Actions)
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { isGovtPrimaryModeEnabled, PRIMARY_GRADES } from "@/lib/config";
 import { db } from "@/lib/db";
+import { buildStudentVisibilityWhere, isPrivilegedOrStaff } from "@/lib/server/role-scope";
 import { asPlainArray, toIsoDate } from "@/lib/server/serializers";
 import {
-  provisionRoleUser,
-  type ProvisionedCredential,
+    provisionRoleUser,
+    type ProvisionedCredential,
 } from "@/server/services/user-provisioning";
-import { buildStudentVisibilityWhere, isPrivilegedOrStaff } from "@/lib/server/role-scope";
-import { isGovtPrimaryModeEnabled, PRIMARY_GRADES } from "@/lib/config";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 // ─── Schemas ───────────────────────────────
 type ValidationLocale = "bn" | "en";
@@ -832,4 +832,95 @@ export async function getDashboardStats() {
       class: student.class ? { name: student.class.name } : null,
     })),
   };
+}
+
+// ─── Export Functionality ───────────────────────────────
+
+export async function exportStudentsToCSV(params: {
+  search?: string;
+  classId?: string;
+  status?: string;
+}): Promise<{
+  success: boolean;
+  data?: Array<{
+    studentId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    dateOfBirth: string;
+    gender: string;
+    class: string;
+    status: string;
+    joinedDate: string;
+  }>;
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    const user = session?.user as { institutionId?: string } | undefined;
+    const institutionId = user?.institutionId;
+
+    if (!institutionId) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const where: Parameters<typeof db.student.findMany>[0]["where"] = {
+      institutionId,
+    };
+
+    if (params.status) {
+      where.status = params.status;
+    }
+    if (params.classId) {
+      where.classId = params.classId;
+    }
+    if (params.search) {
+      where.OR = [
+        { firstName: { contains: params.search, mode: "insensitive" } },
+        { lastName: { contains: params.search, mode: "insensitive" } },
+        { studentId: { contains: params.search, mode: "insensitive" } },
+        { email: { contains: params.search, mode: "insensitive" } },
+      ];
+    }
+
+    const students = await db.student.findMany({
+      where,
+      select: {
+        studentId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        dateOfBirth: true,
+        gender: true,
+        status: true,
+        createdAt: true,
+        class: { select: { name: true, grade: true, section: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const exportData = asPlainArray(students).map((student) => ({
+      studentId: student.studentId || "",
+      firstName: student.firstName,
+      lastName: student.lastName,
+      email: student.email || "",
+      phone: student.phone || "",
+      dateOfBirth: student.dateOfBirth ? toIsoDate(student.dateOfBirth) : "",
+      gender: student.gender || "",
+      class: student.class
+        ? `${student.class.grade} - ${student.class.name}`
+        : "",
+      status: student.status,
+      joinedDate: toIsoDate(student.createdAt),
+    }));
+
+    return { success: true, data: exportData };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Export failed",
+    };
+  }
 }

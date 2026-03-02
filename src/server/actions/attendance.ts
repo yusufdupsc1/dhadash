@@ -1,22 +1,22 @@
 // src/server/actions/attendance.ts
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { isGovtPrimaryModeEnabled, isPrimaryGrade, PRIMARY_GRADES } from "@/lib/config";
 import { db } from "@/lib/db";
 import {
-  asPlainArray,
-  normalizeGroupCount,
-  toIsoDate,
+    buildStudentVisibilityWhere,
+    getTeacherClassScope,
+    isPrivilegedOrStaff,
+} from "@/lib/server/role-scope";
+import {
+    asPlainArray,
+    normalizeGroupCount,
+    toIsoDate,
 } from "@/lib/server/serializers";
 import { createDomainEvent, publishDomainEvent } from "@/server/events/publish";
-import {
-  buildStudentVisibilityWhere,
-  getTeacherClassScope,
-  isPrivilegedOrStaff,
-} from "@/lib/server/role-scope";
-import { isGovtPrimaryModeEnabled, isPrimaryGrade, PRIMARY_GRADES } from "@/lib/config";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 const AttendanceEntrySchema = z.object({
   studentId: z.string(),
@@ -425,4 +425,96 @@ export async function getAttendanceTrend({
     status: item.status,
     _count: normalizeGroupCount(item._count),
   }));
+}
+
+// ─── Export Functionality ───────────────────────────────
+
+export async function exportAttendanceRegisterToCSV(params: {
+  classId: string;
+  date: string;
+}): Promise<{
+  success: boolean;
+  data?: Array<{
+    rolNo: string;
+    studentId: string;
+    firstName: string;
+    lastName: string;
+    status: string;
+  }>;
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    const user = session?.user as
+      | {
+          id?: string;
+          institutionId?: string;
+          role?: string;
+          email?: string | null;
+          phone?: string | null;
+        }
+      | undefined;
+
+    if (!user?.institutionId) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const { institutionId, id: userId, role, email, phone } = user;
+
+    // Verify class exists
+    const classExists = await db.class.findUnique({
+      where: { id: params.classId },
+      select: { institutionId: true },
+    });
+
+    if (!classExists || classExists.institutionId !== institutionId) {
+      return { success: false, error: "Class not found" };
+    }
+
+    // Get students for the class with attendance
+    const attendanceDate = new Date(params.date);
+    attendanceDate.setHours(0, 0, 0, 0);
+
+    const students = await db.student.findMany({
+      where: {
+        classId: params.classId,
+        institutionId,
+      },
+      select: {
+        id: true,
+        studentId: true,
+        firstName: true,
+        lastName: true,
+        rollNo: true,
+        attendance: {
+          where: {
+            date: attendanceDate,
+          },
+          select: {
+            status: true,
+          },
+          take: 1,
+        },
+      },
+      orderBy: [
+        { rollNo: "asc" },
+        { firstName: "asc" },
+      ],
+    });
+
+    const exportData = asPlainArray(students).map((student, index) => ({
+      rolNo: student.rollNo || String(index + 1),
+      studentId: student.studentId,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      status: student.attendance?.[0]?.status || "ABSENT",
+    }));
+
+    return { success: true, data: exportData };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Export failed",
+    };
+  }
 }

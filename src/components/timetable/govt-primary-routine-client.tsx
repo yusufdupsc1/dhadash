@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Printer, Save } from "lucide-react";
+import { Printer, Save, AlertCircle } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -161,6 +161,35 @@ export function GovtPrimaryRoutineClient({
       return;
     }
 
+    const emptyPeriods: string[] = [];
+    routine.rows.forEach((row) => {
+      row.periods.forEach((period) => {
+        const subject = matrix[cellKey(row.dayOfWeek, period.periodNo)]?.trim();
+        if (!subject) {
+          emptyPeriods.push(`${row.label} Period ${period.periodNo}`);
+        }
+      });
+    });
+
+    if (emptyPeriods.length > 0) {
+      if (emptyPeriods.length > 5) {
+        toast.warning(`${emptyPeriods.length} periods are empty. Save anyway?`, {
+          action: { label: "Save", onClick: performSave },
+        });
+      } else {
+        toast.warning(`Empty periods found: ${emptyPeriods.join(", ")}`, {
+          action: { label: "Save Anyway", onClick: performSave },
+        });
+      }
+      return;
+    }
+
+    performSave();
+  };
+
+  const performSave = () => {
+    if (!activeClass) return;
+
     startTransition(async () => {
       const entries = routine.rows.flatMap((row) =>
         row.periods.map((period) => ({
@@ -176,10 +205,15 @@ export function GovtPrimaryRoutineClient({
       });
 
       if (result.success) {
-        toast.success("Routine saved.");
+        toast.success("Routine saved successfully.");
         router.refresh();
       } else {
-        toast.error(result.error);
+        toast.error(result.error || "Failed to save routine");
+        if (result.fieldErrors) {
+          Object.entries(result.fieldErrors).forEach(([field, messages]) => {
+            toast.error(`${field}: ${messages.join(", ")}`);
+          });
+        }
       }
     });
   };
@@ -283,8 +317,10 @@ export function GovtPrimaryRoutineClient({
           </table>
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          No Class 1-5 section found. Create classes first.
+        <div className="rounded-lg border border-dashed border-border p-10 text-center">
+          <AlertCircle className="mx-auto h-10 w-10 text-muted-foreground/50 mb-3" />
+          <p className="font-medium text-foreground mb-1">No classes available</p>
+          <p className="text-sm text-muted-foreground">Classes 1-5 not found. Create classes in settings first.</p>
         </div>
       )}
     </div>

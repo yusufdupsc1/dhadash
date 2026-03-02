@@ -81,8 +81,14 @@ export function NoticeBoardClient({
   };
 
   const handleCreate = () => {
-    if (!title.trim() || !body.trim() || !publishDate) {
-      toast.error(t("notice_required_fields"));
+    const errors: string[] = [];
+
+    if (!title.trim()) errors.push(t("notice_title_required"));
+    if (!body.trim()) errors.push(t("notice_body_required"));
+    if (!publishDate) errors.push("Publish date required");
+
+    if (errors.length > 0) {
+      toast.error(errors.join(". "));
       return;
     }
 
@@ -95,7 +101,12 @@ export function NoticeBoardClient({
       });
 
       if (!result.success) {
-        toast.error(result.error);
+        toast.error(result.error || "Failed to publish notice");
+        if (result.fieldErrors) {
+          Object.entries(result.fieldErrors).forEach(([field, messages]) => {
+            toast.error(`${field}: ${messages.join(", ")}`);
+          });
+        }
         return;
       }
 
@@ -126,8 +137,14 @@ export function NoticeBoardClient({
 
   const handleSaveEdit = () => {
     if (!editingNoticeId) return;
-    if (!editTitle.trim() || !editBody.trim() || !editPublishDate) {
-      toast.error(t("notice_required_fields"));
+
+    const errors: string[] = [];
+    if (!editTitle.trim()) errors.push(t("notice_title_required"));
+    if (!editBody.trim()) errors.push(t("notice_body_required"));
+    if (!editPublishDate) errors.push("Publish date required");
+
+    if (errors.length > 0) {
+      toast.error(errors.join(". "));
       return;
     }
 
@@ -140,7 +157,12 @@ export function NoticeBoardClient({
       });
 
       if (!result.success) {
-        toast.error(result.error);
+        toast.error(result.error || "Failed to update notice");
+        if (result.fieldErrors) {
+          Object.entries(result.fieldErrors).forEach(([field, messages]) => {
+            toast.error(`${field}: ${messages.join(", ")}`);
+          });
+        }
         return;
       }
 
@@ -238,8 +260,10 @@ export function NoticeBoardClient({
 
         <div className="space-y-3">
           {notices.length === 0 ? (
-            <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              {t("no_notices_found")}
+            <div className="rounded-md border border-dashed border-border p-8 text-center">
+              <CalendarPlus className="mx-auto h-8 w-8 text-muted-foreground/50 mb-2" />
+              <p className="font-medium text-foreground mb-1">{t("no_notices_found")}</p>
+              <p className="text-sm text-muted-foreground">Create and publish notices to inform students and parents</p>
             </div>
           ) : (
             notices.map((notice) => (

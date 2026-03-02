@@ -28,6 +28,7 @@ export const InstitutionSettingsSchema = z.object({
   certificateLogoUrl: z.string().url().optional().or(z.literal("")),
   publicReportsEnabled: z.boolean().default(false),
   publicReportsDescription: z.string().max(240).optional().or(z.literal("")),
+  useBanglaDigits: z.boolean().default(false),
 });
 
 export type InstitutionProfileInput = z.infer<typeof InstitutionProfileSchema>;
