@@ -1,22 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/progress-weekly",
-      "schedule": "0 0 * * 0"
-    },
-    {
-      "path": "/api/cron/progress-monthly",
-      "schedule": "0 1 1 * *"
-    },
-    {
-      "path": "/api/cron/progress-quarterly",
-      "schedule": "0 2 1 1,4,7,10 *"
-    },
-    {
-      "path": "/api/cron/annual-final",
-      "schedule": "0 3 15 12 *"
-    }
-  ],
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "nextjs"
