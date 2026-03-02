@@ -137,6 +137,10 @@ model User {
   accessRequestsApproved AccessRequest[] @relation("AccessRequestApprovedUser")
   accessRequestsReviewed AccessRequest[] @relation("AccessRequestReviewedBy")
   otpChallenges          PhoneOtpChallenge[]
+  exportAuditLogs        ExportAuditLog[] @relation("ExportLogs")
+  exportDownloadTokens   ExportDownloadToken[] @relation("DownloadTokens")
+  dsarRequests           DsarRequest[]       @relation("DsarRequests")
+  dsarRequests           DsarRequest[]         @relation("DsarRequests")
 
   @@index([institutionId])
   @@index([email])
