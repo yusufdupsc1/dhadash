@@ -166,11 +166,11 @@ export function Hero() {
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
                       <span className="text-primary-foreground font-bold text-sm">
-                        D
+                        ধ
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold">Dhadash Dashboard</p>
+                      <p className="text-sm font-semibold">ধাদাশ ড্যাশবোর্ড</p>
                       <p className="text-xs text-muted-foreground">
                         ড্যাশবোর্ড overview
                       </p>

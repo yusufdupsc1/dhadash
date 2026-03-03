@@ -27,7 +27,7 @@ import { Role } from "@prisma/client";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
+  title: "DH-gps Admin",
 };
 
 // Next.js 15/16 — no caching by default for dynamic data

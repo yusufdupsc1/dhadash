@@ -67,9 +67,24 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
         icon: LayoutDashboard,
         roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF"],
       },
-      { label: "Teacher Portal", href: "/dashboard/portal/teacher", icon: UserRound, roles: ["TEACHER"] },
-      { label: "Student Portal", href: "/dashboard/portal/student", icon: GraduationCap, roles: ["STUDENT"] },
-      { label: "Parent Portal", href: "/dashboard/portal/parent", icon: Users, roles: ["PARENT"] },
+      {
+        label: "Teacher Portal",
+        href: "/dashboard/portal/teacher",
+        icon: UserRound,
+        roles: ["TEACHER"],
+      },
+      {
+        label: "Student Portal",
+        href: "/dashboard/portal/student",
+        icon: GraduationCap,
+        roles: ["STUDENT"],
+      },
+      {
+        label: "Parent Portal",
+        href: "/dashboard/portal/parent",
+        icon: Users,
+        roles: ["PARENT"],
+      },
       {
         label: "Analytics",
         href: "/dashboard/analytics",
@@ -106,10 +121,30 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
         icon: Bookmark,
         roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF"],
       },
-      { label: "Teachers", href: "/dashboard/teachers", icon: Users, roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF"] },
-      { label: "Classes", href: "/dashboard/classes", icon: BookOpen, roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF"] },
-      { label: "Attendance", href: "/dashboard/attendance", icon: ClipboardCheck, roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"] },
-      { label: "Grades", href: "/dashboard/grades", icon: School, roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"] },
+      {
+        label: "Teachers",
+        href: "/dashboard/teachers",
+        icon: Users,
+        roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF"],
+      },
+      {
+        label: "Classes",
+        href: "/dashboard/classes",
+        icon: BookOpen,
+        roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF"],
+      },
+      {
+        label: "Attendance",
+        href: "/dashboard/attendance",
+        icon: ClipboardCheck,
+        roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"],
+      },
+      {
+        label: "Grades",
+        href: "/dashboard/grades",
+        icon: School,
+        roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"],
+      },
     ],
   },
   {
@@ -121,8 +156,18 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
         icon: CreditCard,
         roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL"],
       },
-      { label: "Events", href: "/dashboard/events", icon: Calendar, roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"] },
-      { label: "Announcements", href: "/dashboard/announcements", icon: Bell, roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"] },
+      {
+        label: "Events",
+        href: "/dashboard/events",
+        icon: Calendar,
+        roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"],
+      },
+      {
+        label: "Announcements",
+        href: "/dashboard/announcements",
+        icon: Bell,
+        roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL", "STAFF", "TEACHER"],
+      },
     ],
   },
   {
@@ -206,12 +251,13 @@ export function Sidebar({ session }: SidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const userRole = (session.user as any)?.role ?? "";
-  const userInitials = (session.user.name ?? "User")
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) ?? "U";
+  const userInitials =
+    (session.user.name ?? "User")
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) ?? "U";
 
   const isActive = (href: string, exact = false) => {
     if (href.includes("?")) {
@@ -230,14 +276,18 @@ export function Sidebar({ session }: SidebarProps) {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const groupedExpanded = (() => {
     const next = { ...expandedGroups };
     for (const section of NAV_SECTIONS) {
       for (const item of section.items) {
         if (!item.children?.length) continue;
-        const hasActiveChild = item.children.some((child) => isActive(child.href, child.exact));
+        const hasActiveChild = item.children.some((child) =>
+          isActive(child.href, child.exact),
+        );
         const key = item.href;
         if (typeof next[key] === "undefined") {
           next[key] = hasActiveChild || isActive(item.href);
@@ -282,8 +332,10 @@ export function Sidebar({ session }: SidebarProps) {
   };
 
   const localizeItem = (label: string) => {
-    if (govtPrimaryMode && label === "Teacher Portal") return t("assistant_teacher_portal");
-    if (govtPrimaryMode && label === "Institution") return t("primary_school_setup");
+    if (govtPrimaryMode && label === "Teacher Portal")
+      return t("assistant_teacher_portal");
+    if (govtPrimaryMode && label === "Institution")
+      return t("primary_school_setup");
     if (govtPrimaryMode && label === "Students") return t("student");
     if (govtPrimaryMode && label === "Teachers") return tg("assistant_teacher");
     if (govtPrimaryMode && label === "Classes") return t("primary_classes");
@@ -303,9 +355,12 @@ export function Sidebar({ session }: SidebarProps) {
             <ShieldCheck className="h-4 w-4 text-primary-foreground" />
           </div>
           <span className="font-bold text-sm tracking-tight truncate">
-            Dhadash
+            ধাদাশ
           </span>
-          <Badge variant="outline" className="ml-auto text-[10px] font-mono py-0">
+          <Badge
+            variant="outline"
+            className="ml-auto text-[10px] font-mono py-0"
+          >
             v1.0
           </Badge>
         </div>
@@ -333,7 +388,10 @@ export function Sidebar({ session }: SidebarProps) {
             const visibleItems = section.items.filter(
               (item) =>
                 (!item.roles || item.roles.includes(userRole)) &&
-                !(govtPrimaryMode && GOVT_PRIMARY_HIDDEN_NAV_HREFS.has(item.href))
+                !(
+                  govtPrimaryMode &&
+                  GOVT_PRIMARY_HIDDEN_NAV_HREFS.has(item.href)
+                ),
             );
             if (visibleItems.length === 0) return null;
 
@@ -348,7 +406,10 @@ export function Sidebar({ session }: SidebarProps) {
                     const visibleChildren = (item.children ?? []).filter(
                       (child) =>
                         (!child.roles || child.roles.includes(userRole)) &&
-                        !(govtPrimaryMode && GOVT_PRIMARY_HIDDEN_NAV_HREFS.has(child.href)),
+                        !(
+                          govtPrimaryMode &&
+                          GOVT_PRIMARY_HIDDEN_NAV_HREFS.has(child.href)
+                        ),
                     );
                     const hasActiveChild = visibleChildren.some((child) =>
                       isActive(child.href, child.exact),
@@ -365,7 +426,7 @@ export function Sidebar({ session }: SidebarProps) {
                             "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-medium transition-all duration-150",
                             active
                               ? "sidebar-active-item"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted",
                           )}
                         >
                           <item.icon
@@ -373,10 +434,12 @@ export function Sidebar({ session }: SidebarProps) {
                               "h-4 w-4 flex-shrink-0",
                               active
                                 ? "sidebar-active-icon"
-                                : "text-muted-foreground"
+                                : "text-muted-foreground",
                             )}
                           />
-                            <span className="truncate">{localizeItem(item.label)}</span>
+                          <span className="truncate">
+                            {localizeItem(item.label)}
+                          </span>
                           {item.badge && (
                             <span className="ml-auto font-mono text-[10px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded">
                               {item.badge}
@@ -411,10 +474,14 @@ export function Sidebar({ session }: SidebarProps) {
                           <item.icon
                             className={cn(
                               "h-4 w-4 flex-shrink-0",
-                              active ? "sidebar-active-icon" : "text-muted-foreground",
+                              active
+                                ? "sidebar-active-icon"
+                                : "text-muted-foreground",
                             )}
                           />
-                          <span className="truncate">{localizeItem(item.label)}</span>
+                          <span className="truncate">
+                            {localizeItem(item.label)}
+                          </span>
                           <ChevronDown
                             className={cn(
                               "ml-auto h-3.5 w-3.5 transition-transform",

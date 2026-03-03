@@ -20,7 +20,7 @@ export function LandingHeader() {
           <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20">
             <Shield className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-bold tracking-tight">Dhadash</span>
+          <span className="text-lg font-bold tracking-tight">ধাদাশ</span>
         </Link>
 
         {/* Desktop Navigation */}

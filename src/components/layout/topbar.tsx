@@ -84,7 +84,7 @@ export function TopBar({ session, onMenuClick }: TopBarProps) {
           <p className="text-xs text-muted-foreground">{topLabel}</p>
           <p className="truncate text-sm font-semibold">
             {(session.user as { institutionName?: string }).institutionName ??
-              "Dhadash"}
+              "ধাদাশ সরকারি প্রাথমিক বিদ্যালয়"}
           </p>
         </div>
       </div>

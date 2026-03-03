@@ -69,9 +69,9 @@ export default async function LoginPage({
               <Shield className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <span className="font-bold text-2xl tracking-tight">Dhadash</span>
+              <span className="font-bold text-2xl tracking-tight">ধাদাশ</span>
               <p className="text-xs text-muted-foreground">
-                School Management System
+                ধাদাশ সরকারি প্রাথমিক বিদ্যালয়
               </p>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default async function LoginPage({
 
         {/* Bottom info */}
         <div className="relative z-10 flex items-center justify-between text-xs text-muted-foreground pt-6 border-t border-border/30">
-          <p>© 2024 Dhadash. বাংলাদেশে তৈরি।</p>
+          <p>© 2024 ধাদাশ. বাংলাদেশে তৈরি।</p>
           <div className="flex items-center gap-4">
             <Link
               href="/terms"
@@ -136,7 +136,7 @@ export default async function LoginPage({
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-md">
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-bold text-xl">Dhadash</span>
+            <span className="font-bold text-xl">ধাদাশ</span>
           </div>
 
           <div className="space-y-2 mb-8">

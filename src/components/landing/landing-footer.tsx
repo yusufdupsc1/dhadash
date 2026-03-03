@@ -32,7 +32,7 @@ export function LandingFooter() {
               <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-md">
                 <Shield className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">Dhadash</span>
+              <span className="text-xl font-bold">ধাদাশ</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm text-muted-foreground leading-relaxed">
               বাংলাদেশের সরকারি প্রাথমিক বিদ্যালয়গুলোর জন্য তৈরি আধুনিক স্কুল
@@ -80,7 +80,7 @@ export function LandingFooter() {
         {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Dhadash. সর্বস্বত্ব সংরক্ষিত। বাংলাদেশে তৈরি।
+            © {currentYear} ধাদাশ. সর্বস্বত্ব সংরক্ষিত। বাংলাদেশে তৈরি।
           </p>
           <div className="flex items-center gap-6">
             <a
