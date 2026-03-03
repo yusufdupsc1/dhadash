@@ -412,7 +412,7 @@ export function LoginForm({
                 type="email"
                 autoComplete="email"
                 autoFocus
-                placeholder="admin@dhadash-gps.vercel.com"
+                placeholder="admin@dhadash-gps.vercel.app"
                 disabled={isPending || isSendingOtp}
                 className={errors.email ? "border-destructive" : ""}
                 {...register("email")}
@@ -592,7 +592,7 @@ export function LoginForm({
         </p>
         <div className="space-y-1 font-mono text-sm text-foreground/80">
           <div className="flex justify-between items-center group">
-            <span>admin@dhadash-gps.vercel.com</span>
+            <span>admin@dhadash-gps.vercel.app</span>
             <span className="text-muted-foreground group-hover:text-primary transition-colors text-xs">
               DH_Admin2026
             </span>

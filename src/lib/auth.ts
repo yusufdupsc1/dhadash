@@ -17,7 +17,7 @@ const ALLOW_DEMO_LOGIN = process.env.ALLOW_DEMO_LOGIN !== "false";
 const DEMO_INSTITUTION = {
   slug: "dhadash-demo",
   name: "ধাদাশ সরকারি প্রাথমিক বিদ্যালয়",
-  email: "admin@dhadash-gps.vercel.com",
+  email: "admin@dhadash-gps.vercel.app",
   city: "Dhaka",
   country: "BD",
   timezone: "Asia/Dhaka",
@@ -26,7 +26,7 @@ const DEMO_INSTITUTION = {
 
 const DEMO_USERS = [
   {
-    email: "admin@dhadash-gps.vercel.com",
+    email: "admin@dhadash-gps.vercel.app",
     password: "DH_Admin2026",
     name: "DH_Admin",
     role: "ADMIN",

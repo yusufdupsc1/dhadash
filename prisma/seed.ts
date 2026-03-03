@@ -63,7 +63,7 @@ async function main() {
     create: {
       name: "ধাদাশ সরকারি প্রাথমিক বিদ্যালয়",
       slug: "dhadash-demo",
-      email: "admin@dhadash-gps.vercel.com",
+      email: "admin@dhadash-gps.vercel.app",
       phone: "+8801700000000",
       address: "123 Innovation Way",
       city: "Dhaka",
@@ -116,7 +116,7 @@ async function main() {
     },
     create: {
       name: "DH_Admin",
-      email: "admin@dhadash-gps.vercel.com",
+      email: "admin@dhadash-gps.vercel.app",
       password: hashedPassword,
       role: Role.ADMIN,
       emailVerified: new Date(),

@@ -103,7 +103,7 @@ export default function RegisterPage() {
               <Input
                 id="reg-email"
                 type="email"
-                placeholder="admin@dhadash-gps.vercel.com"
+                placeholder="admin@dhadash-gps.vercel.app"
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
                 required
