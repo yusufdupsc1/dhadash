@@ -9,23 +9,33 @@ interface EventItem {
   type: string;
 }
 
-export function UpcomingEvents({ events }: { events: EventItem[] }) {
+interface UpcomingEventsProps {
+  events: EventItem[];
+  isBangla?: boolean;
+}
+
+export function UpcomingEvents({
+  events,
+  isBangla = false,
+}: UpcomingEventsProps) {
   return (
-    <section className="group relative flex h-full flex-col overflow-hidden rounded-[2rem] border border-border/40 bg-card/60 backdrop-blur-xl p-6 shadow-sm shadow-black/5 transition-premium hover:border-primary/20 premium-shadow">
+    <section className="group relative flex h-full flex-col overflow-hidden rounded-[2rem] border border-border bg-card p-6 shadow-sm transition-premium hover:border-primary/25">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-primary/60 via-accent/60 to-primary/60" />
       <div className="flex items-center justify-between mb-6">
         <div className="flex flex-col">
-          <h2 className="text-lg font-black tracking-tight text-foreground/90 flex items-center gap-2">
-            Academic Calendar
+          <h2 className="text-lg font-bold tracking-tight text-foreground/90">
+            {isBangla ? "একাডেমিক ক্যালেন্ডার" : "Academic Calendar"}
           </h2>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-            Scheduled Events
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            {isBangla ? "নির্ধারিত ইভেন্ট" : "Scheduled Events"}
           </p>
         </div>
         <Link
           href="/dashboard/events"
-          className="text-[11px] font-bold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors uppercase tracking-widest leading-none"
+          className="flex items-center gap-1 text-[11px] font-bold uppercase leading-none tracking-widest text-muted-foreground transition-colors hover:text-primary"
         >
-          Full Schedule <ArrowRight className="h-3 w-3" />
+          {isBangla ? "পূর্ণ তালিকা" : "Full Schedule"}{" "}
+          <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 
@@ -34,16 +44,16 @@ export function UpcomingEvents({ events }: { events: EventItem[] }) {
           events.map((event, i) => (
             <div
               key={event.id}
-              className="group/item relative overflow-hidden rounded-2xl border border-border/40 bg-muted/20 px-4 py-4 hover:bg-card hover:border-border hover:shadow-md transition-premium"
+              className="group/item relative overflow-hidden rounded-2xl border border-border bg-muted/20 px-4 py-4 transition-premium hover:border-primary/20 hover:bg-primary/5"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="font-bold text-sm text-foreground/90 group-hover/item:text-primary transition-colors leading-tight">
+                  <p className="text-sm font-semibold leading-tight text-foreground/90 transition-colors group-hover/item:text-primary">
                     {event.title}
                   </p>
                   <div className="flex items-center gap-2 text-[11px]">
-                    <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-widest text-[9px]">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary">
                       {event.type}
                     </span>
                     <span className="text-muted-foreground/60">•</span>
@@ -52,7 +62,7 @@ export function UpcomingEvents({ events }: { events: EventItem[] }) {
                     </span>
                   </div>
                 </div>
-                <div className="h-10 w-10 rounded-xl bg-background/50 flex flex-col items-center justify-center border border-border/40 shadow-sm">
+                <div className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-border/70 bg-background/60 shadow-sm">
                   <span className="text-[10px] font-black text-primary leading-none">
                     {new Date(event.startDate).getDate()}
                   </span>
@@ -66,13 +76,13 @@ export function UpcomingEvents({ events }: { events: EventItem[] }) {
             </div>
           ))
         ) : (
-          <div className="h-40 flex flex-col items-center justify-center p-6 border-2 border-dashed border-border/60 rounded-[1.5rem] bg-muted/10">
+          <div className="flex h-40 flex-col items-center justify-center rounded-[1.5rem] border-2 border-dashed border-border/60 bg-muted/10 p-6">
             <CalendarDays className="h-10 w-10 text-muted-foreground/20 mb-3" />
             <p className="text-sm font-bold text-muted-foreground/60">
-              No scheduled events
+              {isBangla ? "কোনো ইভেন্ট নেই" : "No scheduled events"}
             </p>
-            <p className="text-[10px] text-muted-foreground/40 mt-1 uppercase tracking-widest">
-              Calendar is clear
+            <p className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground/40">
+              {isBangla ? "ক্যালেন্ডার ফাঁকা" : "Calendar is clear"}
             </p>
           </div>
         )}

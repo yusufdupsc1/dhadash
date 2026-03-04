@@ -10,118 +10,126 @@ import {
   CalendarDays,
   ArrowRight,
 } from "lucide-react";
+import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
+import { normalizeLocale } from "@/lib/i18n/getDict";
 
 const actions = [
   {
-    label: "Add Pupil",
+    label: { en: "Add Student", bn: "শিক্ষার্থী যোগ করুন" },
     href: "/dashboard/students",
     icon: UserPlus,
-    color: "text-cyan-600",
-    bg: "bg-cyan-50",
+    color: "text-primary",
+    bg: "bg-primary/10",
   },
   {
-    label: "Take Attendance",
+    label: { en: "Take Attendance", bn: "উপস্থিতি নিন" },
     href: "/dashboard/attendance",
     icon: CalendarCheck,
-    color: "text-emerald-600",
-    bg: "bg-emerald-50",
+    color: "text-primary",
+    bg: "bg-primary/10",
   },
   {
-    label: "Create Notice",
+    label: { en: "Create Notice", bn: "নোটিশ প্রকাশ করুন" },
     href: "/dashboard/announcements",
     icon: Megaphone,
-    color: "text-amber-600",
-    bg: "bg-amber-50",
+    color: "text-accent",
+    bg: "bg-accent/10",
   },
   {
-    label: "Collect Fee",
+    label: { en: "Collect Fee", bn: "ফি সংগ্রহ" },
     href: "/dashboard/finance",
     icon: Banknote,
-    color: "text-blue-600",
-    bg: "bg-blue-50",
+    color: "text-primary",
+    bg: "bg-primary/10",
   },
   {
-    label: "Add Result",
+    label: { en: "Add Result", bn: "রেজাল্ট এন্ট্রি" },
     href: "/dashboard/grades",
     icon: FileBadge,
-    color: "text-violet-600",
-    bg: "bg-violet-50",
+    color: "text-accent",
+    bg: "bg-accent/10",
   },
   {
-    label: "Send SMS",
+    label: { en: "Send SMS", bn: "এসএমএস পাঠান" },
     href: "/dashboard/notices",
     icon: MessagesSquare,
-    color: "text-indigo-600",
-    bg: "bg-indigo-50",
+    color: "text-primary",
+    bg: "bg-primary/10",
   },
   {
-    label: "Primary Exams",
+    label: { en: "Primary Exams", bn: "প্রাথমিক পরীক্ষা" },
     href: "/dashboard/exams/primary",
     icon: FileText,
-    color: "text-purple-600",
-    bg: "bg-purple-50",
+    color: "text-accent",
+    bg: "bg-accent/10",
   },
   {
-    label: "Timetable",
+    label: { en: "Timetable", bn: "রুটিন" },
     href: "/dashboard/timetable",
     icon: CalendarDays,
-    color: "text-sky-600",
-    bg: "bg-sky-50",
+    color: "text-primary",
+    bg: "bg-primary/10",
   },
   {
-    label: "Student Reports",
+    label: { en: "Student Reports", bn: "শিক্ষার্থী রিপোর্ট" },
     href: "/dashboard/students/reports",
     icon: FileBadge,
-    color: "text-pink-600",
-    bg: "bg-pink-50",
+    color: "text-accent",
+    bg: "bg-accent/10",
   },
 ];
 
-export function QuickActions() {
+export async function QuickActions() {
+  const cookieStore = await cookies();
+  const locale = normalizeLocale(
+    cookieStore.get("locale")?.value ?? cookieStore.get("NEXT_LOCALE")?.value,
+  );
+  const isBangla = locale === "bn";
+
   return (
-    <section className="group relative overflow-hidden rounded-3xl border border-border/40 bg-card/60 backdrop-blur-xl p-4 sm:p-6 shadow-sm transition-premium hover:border-primary/20 premium-shadow h-full flex flex-col">
+    <section className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-4 shadow-sm sm:p-6">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-primary via-accent to-primary" />
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
-          <h2 className="text-sm font-black tracking-tight text-foreground/80 uppercase">
-            Quick Actions
+          <h2 className="text-sm font-extrabold uppercase tracking-[0.14em] text-foreground/80">
+            {isBangla ? "দ্রুত কাজ" : "Quick Actions"}
           </h2>
         </div>
         <Link
           href="/dashboard/settings"
-          className="text-[10px] font-bold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors uppercase tracking-widest leading-none"
+          className="flex items-center gap-1 text-[10px] font-bold uppercase leading-none tracking-widest text-muted-foreground transition-colors hover:text-primary"
         >
-          View All <ArrowRight className="h-3 w-3" />
+          {isBangla ? "সব দেখুন" : "View All"} <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 
       <div
-        className="grid grid-cols-3 gap-2 sm:gap-3 flex-1 items-center"
+        className="grid flex-1 grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3"
         data-testid="quick-actions-grid"
       >
         {actions.map((action) => {
           const Icon = action.icon;
+          const label = isBangla ? action.label.bn : action.label.en;
           return (
             <Link
               key={action.href}
               href={action.href}
-              className="flex min-h-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-border/40 bg-background/40 px-1.5 py-2 group/action transition-colors hover:bg-muted/40"
-              data-testid={`quick-action-${action.label.toLowerCase().replace(/\s+/g, "-")}`}
+              className="group/action flex min-h-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-border/80 bg-background/70 px-1.5 py-2 transition-colors hover:border-primary/30 hover:bg-primary/5"
+              data-testid={`quick-action-${action.label.en.toLowerCase().replace(/\s+/g, "-")}`}
             >
               <div
                 className={cn(
-                  "h-10 w-10 rounded-xl sm:h-12 sm:w-12 sm:rounded-2xl flex items-center justify-center shadow-sm border border-black/5 transition-premium relative overflow-hidden",
+                  "relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border shadow-sm transition-premium sm:h-12 sm:w-12 sm:rounded-2xl",
                   action.bg,
                   action.color,
-                  "hover:scale-105 hover:shadow-lg active:scale-95",
+                  "border-current/15 hover:scale-105 hover:shadow-md active:scale-95",
                 )}
               >
-                {/* Micro-shimmer effect on hover */}
-                <div className="absolute inset-0 bg-white/40 translate-x-[-100%] group-hover/action:translate-x-[100%] transition-transform duration-700" />
                 <Icon className="h-5 w-5 sm:h-6 sm:w-6 transition-transform duration-500 group-hover/action:rotate-6" />
               </div>
-              <span className="text-[10px] sm:text-[11px] font-bold tracking-tight text-muted-foreground/80 group-hover/action:text-foreground transition-colors leading-tight text-center px-0.5 line-clamp-2 w-full">
-                {action.label}
+              <span className="w-full px-0.5 text-center text-[10px] font-semibold leading-tight text-muted-foreground transition-colors group-hover/action:text-primary sm:text-[11px]">
+                {label}
               </span>
             </Link>
           );

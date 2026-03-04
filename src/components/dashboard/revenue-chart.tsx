@@ -18,8 +18,8 @@ export function RevenueChart({
     <section className="flex h-full flex-col rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
       <h2 className="mb-4 flex items-center justify-between gap-2 text-xl font-semibold">
         {isBangla ? "ফি সংগ্রহ (এই বছর)" : "Revenue (This Year)"}
-        <span className="rounded-full border border-amber-100 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-600">
-          YTD
+        <span className="rounded-full border border-accent/20 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">
+          {isBangla ? "চলতি বছর" : "YTD"}
         </span>
       </h2>
 
@@ -28,7 +28,7 @@ export function RevenueChart({
           data.map((row, idx) => (
             <div
               key={`${row.paidAt.toISOString()}-${idx}`}
-              className="flex items-center justify-between rounded-xl border border-border bg-muted/20 px-3 py-2.5"
+              className="flex items-center justify-between rounded-xl border border-border bg-muted/20 px-3 py-2.5 transition-colors hover:border-primary/30 hover:bg-primary/5"
             >
               <span className="text-sm text-muted-foreground">
                 {formatDate(row.paidAt)}

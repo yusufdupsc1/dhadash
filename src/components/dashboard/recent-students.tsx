@@ -40,10 +40,10 @@ export function RecentStudents({
           students.map((student) => (
             <div
               key={student.id}
-              className="flex items-center justify-between rounded-xl border border-border bg-muted/20 px-3 py-2.5"
+              className="flex items-center justify-between rounded-xl border border-border bg-muted/20 px-3 py-2.5 transition-colors hover:border-primary/25 hover:bg-primary/5"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-xs font-semibold text-primary">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-xs font-semibold text-primary">
                   {student.firstName[0]}
                   {student.lastName[0]}
                 </div>

@@ -4,7 +4,9 @@
 
 /* ─── Custom Fonts ─── */
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    var(--font-hind-siliguri), var(--font-geist-sans), ui-sans-serif,
+    system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --font-bn:
     var(--font-hind-siliguri), "Noto Sans Bengali", var(--font-geist-sans),
@@ -65,10 +67,8 @@
 /* ─── Design Token Layer ─── */
 @layer base {
   :root {
-    /* Premium Light Mode Palette */
-    /* Base: Soft, high-readability off-white with a hint of slate */
-    --background: 210 20% 98.5%;
-    --foreground: 222 47% 11%;
+    --background: 42 27% 97%;
+    --foreground: 210 28% 13%;
 
     /* Cards & Popovers: Subtle elevaton with slight border */
     --card: 0 0% 100%;
@@ -87,20 +87,20 @@
     --accent-foreground: 210 40% 98%;
 
     /* UI Shades */
-    --secondary: 210 40% 96.5%;
-    --secondary-foreground: 222 47% 20%;
+    --secondary: 163 26% 93%;
+    --secondary-foreground: 210 28% 17%;
 
-    --muted: 210 30% 95%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 160 22% 93%;
+    --muted-foreground: 210 14% 37%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 215 25% 90%;
-    --input: 215 25% 94%;
+    --border: 156 15% 84%;
+    --input: 156 20% 91%;
     --ring: 163 100% 21%;
 
-    --radius: 12px;
+    --radius: 14px;
 
     /* Custom semantic tokens */
     --success: 142 71% 25%;
@@ -185,23 +185,23 @@
     background-image:
       radial-gradient(
         at 0% 0%,
-        hsla(163, 100%, 21%, 0.05) 0px,
-        transparent 50%
+        hsla(163, 100%, 21%, 0.08) 0px,
+        transparent 42%
       ),
       radial-gradient(
         at 100% 0%,
-        hsla(352, 90%, 56%, 0.03) 0px,
-        transparent 50%
+        hsla(352, 90%, 56%, 0.06) 0px,
+        transparent 42%
       ),
       radial-gradient(
         at 100% 100%,
-        hsla(163, 100%, 21%, 0.05) 0px,
-        transparent 50%
+        hsla(163, 100%, 21%, 0.06) 0px,
+        transparent 42%
       ),
       radial-gradient(
         at 0% 100%,
-        hsla(352, 90%, 56%, 0.03) 0px,
-        transparent 50%
+        hsla(352, 90%, 56%, 0.05) 0px,
+        transparent 42%
       );
     background-attachment: fixed;
     font-synthesis: none;
@@ -251,7 +251,7 @@
   h5,
   h6 {
     @apply font-semibold tracking-tight text-foreground/90;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
   }
 
   a {
@@ -357,7 +357,11 @@
       top: 20%;
       height: 60%;
       width: 3px;
-      background: hsl(var(--primary));
+      background: linear-gradient(
+        to bottom,
+        hsl(var(--primary)),
+        hsl(var(--accent))
+      );
       border-radius: 0 4px 4px 0;
     }
   }

@@ -39,7 +39,7 @@ export function StatsGrid({
       label: isBangla ? "শিক্ষার্থী" : "Students",
       value: n(stats.totalStudents, isBangla),
       icon: Users,
-      color: "text-sky-600",
+      color: "text-primary",
       href: "/dashboard/students",
     },
     {
@@ -55,7 +55,7 @@ export function StatsGrid({
       label: isBangla ? "আজকের উপস্থিতি" : "Present Today",
       value: n(stats.todayAttendance, isBangla),
       icon: ClipboardCheck,
-      color: "text-emerald-600",
+      color: "text-primary",
       href: "/dashboard/attendance",
     },
     {
@@ -67,7 +67,7 @@ export function StatsGrid({
         isBangla ? "bn-BD" : "en-US",
       ),
       icon: CreditCard,
-      color: "text-teal-600",
+      color: "text-accent",
       subtitle: isBangla
         ? `${n(stats.pendingFees.count, isBangla)} টি ইনভয়েস`
         : `${stats.pendingFees.count} invoices`,
@@ -83,7 +83,7 @@ export function StatsGrid({
           <Link
             key={card.label}
             href={card.href}
-            className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:border-primary/30"
+            className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
             data-testid={`stats-card-${card.id}`}
           >
             <div>
@@ -93,14 +93,14 @@ export function StatsGrid({
                 </p>
                 <div
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-lg border bg-muted/20",
+                    "flex h-9 w-9 items-center justify-center rounded-lg border border-current/20 bg-muted/30",
                     card.color,
                   )}
                 >
                   <Icon className="h-4 w-4" />
                 </div>
               </div>
-              <p className="text-4xl font-bold leading-none tracking-tight">
+              <p className="text-3xl font-bold leading-none tracking-tight sm:text-4xl">
                 {card.value}
               </p>
               {card.subtitle ? (

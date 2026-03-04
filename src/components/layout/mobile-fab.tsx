@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { logoutAction } from "@/server/actions/session";
 
 export function MobileFAB() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -52,7 +52,7 @@ export function MobileFAB() {
       <button
         onClick={scrollToTop}
         className={cn(
-          "flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-lg backdrop-blur-md transition-all hover:bg-primary hover:text-white active:scale-90",
+          "flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/25 bg-primary/10 text-primary shadow-lg backdrop-blur-md transition-all hover:bg-primary hover:text-white active:scale-90",
           showScrollTop
             ? "translate-y-0 opacity-100"
             : "pointer-events-none translate-y-2 opacity-0",
@@ -64,17 +64,21 @@ export function MobileFAB() {
         <ArrowUp className="h-5 w-5" />
       </button>
 
-      <button
-        onClick={() => signOut({ callbackUrl: "/auth/login" })}
-        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-destructive/20 bg-destructive/10 text-destructive shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-destructive hover:text-white"
-        title="Sign out"
-      >
-        <LogOut className="h-5 w-5" />
-      </button>
+      <form action={logoutAction}>
+        <button
+          type="submit"
+          className="flex h-12 w-12 items-center justify-center rounded-2xl border border-accent/30 bg-accent/10 text-accent shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-accent hover:text-white"
+          title="Sign out"
+          aria-label="Sign out"
+          data-testid="mobile-fab-logout-button"
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
+      </form>
 
       <Link
         href="/dashboard/settings"
-        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-emerald-500 hover:text-white"
+        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/25 bg-primary/10 text-primary shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-primary hover:text-white"
         title="Settings"
       >
         <Settings className="h-5 w-5 animate-spin-slow" />

@@ -22,9 +22,10 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { getDict } from "@/lib/i18n/getDict";
+import { getDict, normalizeLocale } from "@/lib/i18n/getDict";
 import { cookies } from "next/headers";
 import { isGovtPrimaryModeEnabled } from "@/lib/config";
+import { logoutAction } from "@/server/actions/session";
 import { ActiveLink } from "./active-link.client";
 
 interface NavItem {
@@ -259,7 +260,9 @@ const itemLabelMap: Record<string, string> = {
 
 export async function SidebarServer({ session }: { session: Session }) {
   const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "bn";
+  const locale = normalizeLocale(
+    cookieStore.get("locale")?.value ?? cookieStore.get("NEXT_LOCALE")?.value,
+  );
   const dict = getDict(locale);
   const govtPrimaryMode = isGovtPrimaryModeEnabled();
   const userRole = (session.user as any)?.role ?? "";
@@ -296,41 +299,45 @@ export async function SidebarServer({ session }: { session: Session }) {
   };
 
   return (
-    <aside className="hidden h-svh w-[230px] flex-shrink-0 flex-col border-r border-border/80 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 lg:flex xl:w-[250px]">
+    <aside className="relative hidden h-svh w-[242px] flex-shrink-0 flex-col border-r border-border/80 bg-card/95 lg:flex xl:w-[258px]">
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-gradient-to-b from-primary/40 via-border to-accent/40" />
       {/* Brand */}
       <Link
         href="/dashboard"
-        className="flex items-center gap-2.5 h-14 px-4 border-b border-border hover:bg-muted/50 transition-colors"
+        className="flex h-14 items-center gap-2.5 border-b border-border px-4 transition-colors hover:bg-muted/50"
       >
-        <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-primary shadow-sm">
           <ShieldCheck className="h-4 w-4 text-primary-foreground" />
         </div>
-        <span className="font-bold text-sm tracking-tight truncate">
+        <span className="truncate text-sm font-bold tracking-tight">
           Dhadash
         </span>
-        <Badge variant="outline" className="ml-auto text-[10px] font-mono py-0">
+        <Badge
+          variant="outline"
+          className="ml-auto border-primary/20 bg-primary/5 py-0 font-mono text-[10px] text-primary"
+        >
           v1.0
         </Badge>
       </Link>
 
       {/* Institution badge */}
       <div className="px-3 py-2.5 border-b border-border">
-        <div className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-muted/50">
-          <div className="h-5 w-5 rounded bg-accent/20 flex items-center justify-center flex-shrink-0">
+        <div className="flex items-center gap-2 rounded-md border border-border/60 bg-muted/40 px-2 py-1.5">
+          <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-accent/20">
             <School className="h-3 w-3 text-accent" />
           </div>
           <span className="text-xs font-medium truncate text-foreground/80">
             {(session.user as any)?.institutionName ??
               (govtPrimaryMode ? t("school_name") : t("institution"))}
           </span>
-          <ChevronRight className="h-3 w-3 text-muted-foreground ml-auto flex-shrink-0" />
+          <ChevronRight className="ml-auto h-3 w-3 flex-shrink-0 text-muted-foreground" />
         </div>
       </div>
 
       {/* Navigation */}
       <nav
         aria-label="Primary"
-        className="flex-1 overflow-y-auto py-3 px-2 space-y-4"
+        className="flex-1 space-y-4 overflow-y-auto px-2 py-3"
       >
         {NAV_SECTIONS.map((section) => {
           const visibleItems = section.items.filter(
@@ -344,7 +351,7 @@ export async function SidebarServer({ session }: { session: Session }) {
 
           return (
             <div key={section.label}>
-              <p className="px-2 mb-1 text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/60">
+              <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
                 {localizeSection(section.label)}
               </p>
               <div className="space-y-0.5">
@@ -363,7 +370,7 @@ export async function SidebarServer({ session }: { session: Session }) {
                       <ActiveLink
                         key={item.href}
                         href={item.href}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-medium transition-all duration-150 text-muted-foreground hover:text-foreground hover:bg-muted"
+                        className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/5 hover:text-primary"
                         activeClassName="sidebar-active-item"
                       >
                         <item.icon className="h-4 w-4 flex-shrink-0" />
@@ -387,7 +394,7 @@ export async function SidebarServer({ session }: { session: Session }) {
                     <div key={item.href} className="space-y-1">
                       <ActiveLink
                         href={item.href}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-medium transition-all duration-150 text-muted-foreground hover:text-foreground hover:bg-muted"
+                        className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/5 hover:text-primary"
                         activeClassName="sidebar-active-item"
                       >
                         <item.icon className="h-4 w-4 flex-shrink-0" />
@@ -410,7 +417,7 @@ export async function SidebarServer({ session }: { session: Session }) {
 
       {/* User footer */}
       <div className="border-t border-border p-3">
-        <div className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted transition-colors group">
+        <div className="group flex items-center gap-2.5 rounded-lg p-2 transition-colors hover:bg-muted">
           <Avatar className="h-7 w-7 flex-shrink-0">
             <AvatarImage src={session.user.image ?? ""} />
             <AvatarFallback className="text-[10px] bg-primary/10 text-primary font-semibold">
@@ -426,12 +433,16 @@ export async function SidebarServer({ session }: { session: Session }) {
             </p>
           </div>
 
-          <form action="/api/auth/signout" method="POST">
+          <form action={logoutAction} className="ml-auto">
             <button
               type="submit"
-              className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded text-muted-foreground hover:text-destructive"
+              className="flex items-center gap-1 rounded-md border border-border/70 px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-accent/30 hover:bg-accent/10 hover:text-accent"
+              title={locale === "bn" ? "লগআউট" : "Log out"}
+              aria-label={locale === "bn" ? "লগআউট" : "Log out"}
+              data-testid="sidebar-logout-button"
             >
               <LogOut className="h-3.5 w-3.5" />
+              <span>{locale === "bn" ? "লগআউট" : "Logout"}</span>
             </button>
           </form>
         </div>

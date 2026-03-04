@@ -1,17 +1,20 @@
 import Link from "next/link";
-import { Bell } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import type { Session } from "next-auth";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { getDict } from "@/lib/i18n/getDict";
+import { getDict, normalizeLocale } from "@/lib/i18n/getDict";
 import { cookies } from "next/headers";
 import { isGovtPrimaryModeEnabled } from "@/lib/config";
 import { getDefaultDashboardPath } from "@/lib/role-routing";
+import { logoutAction } from "@/server/actions/session";
 import { MobileMenuDrawer } from "./mobile-menu-drawer.client";
 import { getMobileMenuSections } from "./mobile-menu-config";
 
 export async function TopBarServer({ session }: { session: Session }) {
   const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "bn";
+  const locale = normalizeLocale(
+    cookieStore.get("locale")?.value ?? cookieStore.get("NEXT_LOCALE")?.value,
+  );
   const dict = getDict(locale);
   const govtPrimaryMode = isGovtPrimaryModeEnabled();
   const role = (session.user as { role?: string } | undefined)?.role;
@@ -45,7 +48,8 @@ export async function TopBarServer({ session }: { session: Session }) {
   });
 
   return (
-    <header className="safe-top sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border/80 bg-background/80 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6">
+    <header className="safe-top sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border/80 bg-card/95 px-3 backdrop-blur supports-[backdrop-filter]:bg-card/85 sm:px-6">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-primary via-accent to-primary" />
       <div className="flex min-w-0 items-center gap-2.5">
         <MobileMenuDrawer
           homeHref={homeHref}
@@ -63,16 +67,27 @@ export async function TopBarServer({ session }: { session: Session }) {
           <p className="truncate text-sm font-semibold">{institutionName}</p>
         </Link>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         <LanguageToggle />
         <button
-          className="rounded-full border border-transparent p-2 text-muted-foreground transition-colors hover:border-border hover:bg-muted hover:text-foreground"
+          className="rounded-xl border border-border/70 p-2 text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
           aria-label={t("notifications")}
         >
           <Bell className="h-4 w-4" />
         </button>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="rounded-xl border border-border/70 p-2 text-muted-foreground transition-colors hover:border-accent/40 hover:bg-accent/10 hover:text-accent"
+            aria-label={locale === "bn" ? "লগআউট" : "Log out"}
+            title={locale === "bn" ? "লগআউট" : "Log out"}
+            data-testid="topbar-logout-button"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </form>
         <div
-          className="hidden h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary sm:flex"
+          className="hidden h-9 w-9 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-sm font-semibold text-primary sm:flex"
           aria-hidden="true"
         >
           {initials}

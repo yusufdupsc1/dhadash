@@ -3,6 +3,7 @@
 
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getDashboardStats } from "@/server/actions/students";
 import { db } from "@/lib/db";
 import { StatsGrid } from "@/components/dashboard/stats-grid";
@@ -13,10 +14,11 @@ import { QuickActions } from "@/components/dashboard/quick-actions";
 import { UpcomingEvents } from "@/components/dashboard/upcoming-events";
 import { ExecutiveCommandCenter } from "@/components/dashboard/executive-command-center";
 import { ModernToolkit } from "@/components/dashboard/modern-toolkit";
-import { DEFAULT_LOCALE, DEFAULT_TIMEZONE } from "@/lib/utils";
+import { DEFAULT_TIMEZONE } from "@/lib/utils";
 import { safeLoader } from "@/lib/server/safe-loader";
 import { isGovtPrimaryModeEnabled } from "@/lib/config";
 import { getDefaultDashboardPath } from "@/lib/role-routing";
+import { normalizeLocale } from "@/lib/i18n/getDict";
 import { Role } from "@prisma/client";
 import type { Metadata } from "next";
 
@@ -261,6 +263,12 @@ async function getExecutiveData(institutionId: string) {
 
 export default async function DashboardPage() {
   const session = await auth();
+  const cookieStore = await cookies();
+  const locale = normalizeLocale(
+    cookieStore.get("locale")?.value ?? cookieStore.get("NEXT_LOCALE")?.value,
+  );
+  const isBangla = locale === "bn";
+  const localeTag = isBangla ? "bn-BD" : "en-US";
   const govtPrimaryMode = isGovtPrimaryModeEnabled();
   const user = session?.user as
     | {
@@ -279,8 +287,8 @@ export default async function DashboardPage() {
   }
 
   const institutionId = user.institutionId;
-  const institutionName = user.institutionName ?? "your institution";
-  const userName = user.name?.split(" ")[0] ?? "there";
+  const institutionName = user.institutionName ?? (isBangla ? "আপনার প্রতিষ্ঠান" : "your institution");
+  const userName = user.name?.split(" ")[0] ?? (isBangla ? "আপনি" : "there");
   const now = new Date();
   const hour = Number(
     new Intl.DateTimeFormat("en-GB", {
@@ -290,7 +298,17 @@ export default async function DashboardPage() {
     }).format(now),
   );
   const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    isBangla
+      ? hour < 12
+        ? "শুভ সকাল"
+        : hour < 17
+          ? "শুভ অপরাহ্ন"
+          : "শুভ সন্ধ্যা"
+      : hour < 12
+        ? "Good morning"
+        : hour < 17
+          ? "Good afternoon"
+          : "Good evening";
 
   const statsResult = await safeLoader(
     "DASHBOARD_STATS",
@@ -356,19 +374,18 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 animate-fade-in pb-12">
-      {/* Premium Dashboard Hero Area */}
-      <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-primary/[0.08] via-background to-accent/[0.04] p-8 sm:p-12 border border-primary/10 premium-shadow">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 -z-10 h-96 w-96 monument-motif opacity-[0.03] bg-primary rotate-45 blur-2xl" />
-        <div className="absolute -bottom-24 -left-24 -z-10 h-72 w-72 rounded-full bg-accent/5 blur-3xl" />
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-primary/15 bg-gradient-to-br from-primary/[0.08] via-card to-accent/[0.07] p-6 shadow-sm sm:p-10">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-primary via-accent to-primary" />
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
 
         <div className="grid grid-cols-1 gap-8 items-start">
           <div className="space-y-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-1.5 w-8 rounded-full bg-bd-green" />
-                <p className="text-[10px] font-black text-primary/60 tracking-[0.3em] uppercase">
-                  {now.toLocaleDateString(DEFAULT_LOCALE, {
+                <p className="text-[10px] font-black text-primary/70 tracking-[0.25em] uppercase">
+                  {now.toLocaleDateString(localeTag, {
                     weekday: "long",
                     month: "long",
                     day: "numeric",
@@ -376,18 +393,27 @@ export default async function DashboardPage() {
                 </p>
               </div>
 
-              <h1 className="text-4xl font-black tracking-tighter sm:text-6xl leading-[1.1] text-foreground">
+              <h1 className="text-3xl font-black leading-[1.15] tracking-tight text-foreground sm:text-5xl">
                 {greeting}, <br />
-                <span className="gradient-text">{userName}</span>
+                <span className="text-primary">{userName}</span>
               </h1>
 
-              <p className="text-muted-foreground/80 text-sm sm:text-lg max-w-xl leading-relaxed mt-2">
-                Welcome to your command center for{" "}
-                <strong>{institutionName}</strong>. Everything is synced and
-                secured.
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-lg">
+                {isBangla ? (
+                  <>
+                    <strong>{institutionName}</strong> এর সব গুরুত্বপূর্ণ
+                    স্কুল-অপারেশন এখন এক জায়গায়। সব ডেটা সমন্বিত ও সুরক্ষিত।
+                  </>
+                ) : (
+                  <>
+                    All critical school operations are available in one place
+                    for <strong>{institutionName}</strong>. Everything is synced
+                    and secured.
+                  </>
+                )}
                 {govtPrimaryMode && (
-                  <span className="ml-2 inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-500/20">
-                    GP Mode Active
+                  <span className="ml-2 inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-primary">
+                    {isBangla ? "জিপি মোড চালু" : "GP Mode Active"}
                   </span>
                 )}
               </p>
@@ -400,7 +426,11 @@ export default async function DashboardPage() {
       </div>
 
       {/* KPI Stats */}
-      <StatsGrid stats={stats} />
+      <StatsGrid
+        stats={stats}
+        isBangla={isBangla}
+        govtPrimaryMode={govtPrimaryMode}
+      />
 
       {/* Modern Toolkit Widgets */}
       <ModernToolkit />
@@ -424,20 +454,20 @@ export default async function DashboardPage() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <AttendanceChart data={attendanceData} />
+          <AttendanceChart data={attendanceData} isBangla={isBangla} />
         </div>
         <div>
-          <RevenueChart data={revenueData} />
+          <RevenueChart data={revenueData} isBangla={isBangla} />
         </div>
       </div>
 
       {/* Bottom Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-3">
-          <RecentStudents students={stats.recentStudents} />
+          <RecentStudents students={stats.recentStudents} isBangla={isBangla} />
         </div>
         <div className="lg:col-span-3">
-          <UpcomingEvents events={events} />
+          <UpcomingEvents events={events} isBangla={isBangla} />
         </div>
       </div>
     </div>

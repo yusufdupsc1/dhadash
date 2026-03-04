@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import type { Session } from "next-auth";
 import { isGovtPrimaryModeEnabled } from "@/lib/config";
-import { getDict } from "@/lib/i18n/getDict";
+import { getDict, normalizeLocale } from "@/lib/i18n/getDict";
 import { cookies } from "next/headers";
 import { ActiveLink } from "./active-link.client";
 
@@ -87,7 +87,9 @@ export async function MobileNavServer({ session }: { session: Session }) {
   const govtPrimaryMode = isGovtPrimaryModeEnabled();
 
   const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "bn";
+  const locale = normalizeLocale(
+    cookieStore.get("locale")?.value ?? cookieStore.get("NEXT_LOCALE")?.value,
+  );
   const dict = getDict(locale);
 
   const t = (key: string) => {
@@ -100,25 +102,22 @@ export async function MobileNavServer({ session }: { session: Session }) {
   return (
     <nav
       aria-label="Mobile primary"
-      className="safe-bottom fixed inset-x-0 bottom-0 z-50 flex items-center justify-around h-18 border-t border-border/40 bg-card/80 backdrop-blur-2xl lg:hidden shadow-[0_-8px_30px_rgba(0,0,0,0.08)] px-2"
+      className="safe-bottom fixed inset-x-0 bottom-0 z-50 flex h-18 items-center justify-around border-t border-border/70 bg-card/95 px-2 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl lg:hidden"
     >
       {items.map((item) => (
         <ActiveLink
           key={item.href}
           href={item.href}
-          className="flex-1 flex flex-col items-center justify-center gap-1.5 h-full transition-premium group active:scale-90"
+          className="group flex h-full flex-1 flex-col items-center justify-center gap-1 transition-premium active:scale-90"
           activeClassName="mobile-nav-active"
         >
-          {/* Icon Container */}
-          <div className="relative flex items-center justify-center h-10 w-full group-[.mobile-nav-active]:h-9 group-[.mobile-nav-active]:w-[80%] group-[.mobile-nav-active]:bg-primary group-[.mobile-nav-active]:text-primary-foreground group-[.mobile-nav-active]:rounded-xl transition-all duration-300">
+          <div className="relative flex h-9 w-[78%] items-center justify-center rounded-xl border border-transparent text-muted-foreground transition-all duration-300 group-[.mobile-nav-active]:border-primary/30 group-[.mobile-nav-active]:bg-primary/10 group-[.mobile-nav-active]:text-primary">
             <item.icon className="h-5 w-5 transition-all duration-300 group-[.mobile-nav-active]:scale-110" />
           </div>
 
-          <span className="text-[10px] font-black uppercase tracking-[0.1em] text-muted-foreground transition-colors group-[.mobile-nav-active]:text-primary">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground transition-colors group-[.mobile-nav-active]:text-primary">
             {t(item.labelKey)}
           </span>
-
-          {/* Underline Indicator for non-active items hover might be too much, let's stick to clean active state */}
         </ActiveLink>
       ))}
     </nav>

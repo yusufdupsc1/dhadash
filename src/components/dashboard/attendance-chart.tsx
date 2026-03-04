@@ -28,8 +28,8 @@ export function AttendanceChart({
     <section className="flex h-full flex-col rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
       <h2 className="mb-4 flex items-center justify-between gap-2 text-xl font-semibold">
         {isBangla ? "গত ৩০ দিনের উপস্থিতি" : "Attendance (Last 30 Days)"}
-        <span className="rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-          {isBangla ? "ওভারভিউ" : "Overview"}
+        <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+          {isBangla ? "সংক্ষিপ্ত" : "Overview"}
         </span>
       </h2>
 
@@ -53,9 +53,9 @@ export function AttendanceChart({
                     <span
                       className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                         row.status === "PRESENT"
-                          ? "bg-emerald-100 text-emerald-700"
+                          ? "bg-primary/10 text-primary"
                           : row.status === "ABSENT"
-                            ? "bg-red-100 text-red-700"
+                            ? "bg-accent/10 text-accent"
                             : row.status === "LATE"
                               ? "bg-amber-100 text-amber-700"
                               : "bg-muted text-muted-foreground"
