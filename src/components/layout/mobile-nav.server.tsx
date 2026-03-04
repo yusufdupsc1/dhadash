@@ -5,7 +5,6 @@ import {
   Calendar,
   ClipboardCheck,
   School,
-  School,
   Bell,
   CreditCard,
 } from "lucide-react";
@@ -16,7 +15,6 @@ import { cookies } from "next/headers";
 import { ActiveLink } from "./active-link.client";
 
 function getItems(role?: string) {
-  const govtPrimaryMode = isGovtPrimaryModeEnabled();
   const isPrivileged = ["SUPER_ADMIN", "ADMIN", "PRINCIPAL"].includes(
     role ?? "",
   );
@@ -86,6 +84,7 @@ function getItems(role?: string) {
 export async function MobileNavServer({ session }: { session: Session }) {
   const role = (session.user as { role?: string } | undefined)?.role;
   const items = getItems(role);
+  const govtPrimaryMode = isGovtPrimaryModeEnabled();
 
   const cookieStore = await cookies();
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "bn";

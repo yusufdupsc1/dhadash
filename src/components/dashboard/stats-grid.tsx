@@ -23,6 +23,7 @@ export function StatsGrid({ stats }: { stats: StatsData }) {
 
   const cards = [
     {
+      id: "students",
       label: "Total Students",
       value: stats.totalStudents,
       icon: Users,
@@ -31,6 +32,7 @@ export function StatsGrid({ stats }: { stats: StatsData }) {
       href: "/dashboard/students",
     },
     {
+      id: "teachers",
       label: teacherLabel,
       value: stats.totalTeachers,
       icon: UserCheck,
@@ -39,6 +41,7 @@ export function StatsGrid({ stats }: { stats: StatsData }) {
       href: "/dashboard/teachers",
     },
     {
+      id: "attendance",
       label: "Present Today",
       value: stats.todayAttendance,
       icon: ClipboardCheck,
@@ -47,6 +50,7 @@ export function StatsGrid({ stats }: { stats: StatsData }) {
       href: "/dashboard/attendance",
     },
     {
+      id: "finance",
       label: "Revenue Tracker",
       value: formatCurrency(Number(stats.pendingFees.amount ?? 0)),
       icon: CreditCard,
@@ -72,7 +76,8 @@ export function StatsGrid({ stats }: { stats: StatsData }) {
           <Link
             key={card.label}
             href={card.href}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-[2rem] border border-border/40 bg-card/60 backdrop-blur-sm p-6 shadow-sm transition-premium hover:shadow-xl hover:-translate-y-1 premium-shadow cursor-pointer"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-[2rem] border border-border/40 bg-card/60 backdrop-blur-sm p-6 shadow-sm transition-premium hover:shadow-xl hover:-translate-y-1 premium-shadow cursor-pointer active:scale-[0.99]"
+            data-testid={`stats-card-${card.id}`}
           >
             {/* Background Accent */}
             <div

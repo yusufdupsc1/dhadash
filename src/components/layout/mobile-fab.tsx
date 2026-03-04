@@ -1,30 +1,84 @@
 "use client";
 
-import { LogOut, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUp, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
 export function MobileFAB() {
-    return (
-        <div className="fixed bottom-24 right-5 z-40 flex flex-col gap-3 lg:hidden">
-            {/* Logout FAB */}
-            <button
-                onClick={() => signOut({ callbackUrl: "/auth/login" })}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive border border-destructive/20 shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-destructive hover:text-white"
-                title="Sign out"
-            >
-                <LogOut className="h-5 w-5" />
-            </button>
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
-            {/* Settings FAB */}
-            <Link
-                href="/dashboard/settings"
-                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-emerald-500 hover:text-white"
-                title="Settings"
-            >
-                <Settings className="h-5 w-5 animate-spin-slow" />
-            </Link>
-        </div>
-    );
+  useEffect(() => {
+    const getScrollContainer = () =>
+      document.getElementById("dashboard-main") as HTMLElement | null;
+
+    const onScroll = () => {
+      const container = getScrollContainer();
+      const top = container ? container.scrollTop : window.scrollY;
+      setShowScrollTop(top > 280);
+    };
+
+    const container = getScrollContainer();
+    if (container) {
+      container.addEventListener("scroll", onScroll, { passive: true });
+    } else {
+      window.addEventListener("scroll", onScroll, { passive: true });
+    }
+
+    onScroll();
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", onScroll);
+      } else {
+        window.removeEventListener("scroll", onScroll);
+      }
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    const container = document.getElementById("dashboard-main") as
+      | HTMLElement
+      | null;
+    if (container) {
+      container.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <div className="fixed bottom-24 right-5 z-40 flex flex-col gap-3 lg:hidden">
+      <button
+        onClick={scrollToTop}
+        className={cn(
+          "flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-lg backdrop-blur-md transition-all hover:bg-primary hover:text-white active:scale-90",
+          showScrollTop
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-2 opacity-0",
+        )}
+        title="Back to top"
+        aria-label="Scroll to top"
+        data-testid="scroll-top-fab"
+      >
+        <ArrowUp className="h-5 w-5" />
+      </button>
+
+      <button
+        onClick={() => signOut({ callbackUrl: "/auth/login" })}
+        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-destructive/20 bg-destructive/10 text-destructive shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-destructive hover:text-white"
+        title="Sign out"
+      >
+        <LogOut className="h-5 w-5" />
+      </button>
+
+      <Link
+        href="/dashboard/settings"
+        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 shadow-lg backdrop-blur-md transition-all active:scale-90 hover:bg-emerald-500 hover:text-white"
+        title="Settings"
+      >
+        <Settings className="h-5 w-5 animate-spin-slow" />
+      </Link>
+    </div>
+  );
 }

@@ -362,8 +362,8 @@ export default async function DashboardPage() {
         <div className="absolute top-0 right-0 -z-10 h-96 w-96 monument-motif opacity-[0.03] bg-primary rotate-45 blur-2xl" />
         <div className="absolute -bottom-24 -left-24 -z-10 h-72 w-72 rounded-full bg-accent/5 blur-3xl" />
 
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-10 items-center">
-          <div className="xl:col-span-3 space-y-6">
+        <div className="grid grid-cols-1 gap-8 items-start">
+          <div className="space-y-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-1.5 w-8 rounded-full bg-bd-green" />
@@ -391,16 +391,10 @@ export default async function DashboardPage() {
                   </span>
                 )}
               </p>
-
-              {/* Mobile Quick Actions (under description) */}
-              <div className="block xl:hidden mt-6">
+              <div className="mt-6 max-w-3xl">
                 <QuickActions />
               </div>
             </div>
-          </div>
-
-          <div className="hidden xl:block xl:col-span-2 relative z-10 w-full">
-            <QuickActions />
           </div>
         </div>
       </div>

@@ -47,7 +47,8 @@ type Student = {
   class: { name: string; grade: string; section: string } | null;
 };
 
-id ?: string;
+type FormData = {
+id?: string;
 studentNameBn: string;
 studentNameEn: string;
 firstName: string;

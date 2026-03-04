@@ -1,4 +1,5 @@
 import { type Session } from "next-auth";
+import Link from "next/link";
 import {
   LayoutDashboard,
   Users,
