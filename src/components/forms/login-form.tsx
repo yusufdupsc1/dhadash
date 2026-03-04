@@ -76,12 +76,26 @@ const LoginSchema = z
           message: "Email is required",
           path: ["email"],
         });
-      } else if (!z.string().email().safeParse(value.email.trim()).success) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Please enter a valid email address",
-          path: ["email"],
-        });
+      } else {
+        const identifier = value.email.trim();
+        const isEmail = z.string().email().safeParse(identifier).success;
+        const isAdminUsername = USERNAME_PATTERN.test(identifier);
+
+        if (value.scope === "ADMIN") {
+          if (!isEmail && !isAdminUsername) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Enter a valid email or username.",
+              path: ["email"],
+            });
+          }
+        } else if (!isEmail) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please enter a valid email address",
+            path: ["email"],
+          });
+        }
       }
 
       if (!value.password?.trim()) {
@@ -138,6 +152,7 @@ const AUTH_ERRORS: Record<string, string> = {
 
 const LOGIN_PREFS_KEY = "dhadash.auth.login-prefs";
 const OTP_COOLDOWN_SECONDS = 30;
+const USERNAME_PATTERN = /^[a-zA-Z0-9._-]{3,80}$/;
 
 function normalizeInstitutionSlug(value: string): string {
   return value
@@ -541,10 +556,10 @@ export function LoginForm({
               <Label htmlFor="email">Email address</Label>
               <Input
                 id="email"
-                type="email"
-                autoComplete="email"
+                type="text"
+                autoComplete="username"
                 autoFocus
-                placeholder="admin@school.edu"
+                placeholder="admin@school.edu or Yusuf_Ali"
                 disabled={isPending || isSendingOtp}
                 className={errors.email ? "border-destructive" : ""}
                 {...register("email")}

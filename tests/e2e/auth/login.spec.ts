@@ -81,4 +81,34 @@ test.describe("Authentication Flows", () => {
 
     await expect(page.getByText("If an account exists for")).toBeVisible();
   });
+
+  test("owner super admin can sign in from landing panel", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+
+    await page.getByLabel("Owner username").fill("Yusuf_Ali");
+    await page.getByLabel("Owner password").fill("19Kusum@yusuf");
+    await page.getByRole("button", { name: "Owner Sign In" }).click();
+
+    await page.waitForURL("**/dashboard/owner", { timeout: 60000 });
+    await expect(page).toHaveURL(/\/dashboard\/owner$/);
+    await expect(
+      page.getByRole("heading", { name: /জাতীয় নিয়ন্ত্রণ ড্যাশবোর্ড/i }),
+    ).toBeVisible();
+  });
+
+  test("owner super admin can sign in from auth login form with username", async ({
+    page,
+  }) => {
+    await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
+
+    await page.getByLabel("Email address").fill("Yusuf_Ali");
+    await page.getByLabel("Password").fill("19Kusum@yusuf");
+    await page.getByRole("button", { name: "Sign in" }).click();
+
+    await page.waitForURL("**/dashboard/owner", { timeout: 60000 });
+    await expect(page).toHaveURL(/\/dashboard\/owner$/);
+    await expect(
+      page.getByRole("heading", { name: /জাতীয় নিয়ন্ত্রণ ড্যাশবোর্ড/i }),
+    ).toBeVisible();
+  });
 });

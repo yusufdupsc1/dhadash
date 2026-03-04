@@ -39,6 +39,22 @@ const DEMO_USERS = [
   },
 ] as const;
 
+const OWNER_CONTROL_INSTITUTION = {
+  slug: "mope-owner-control",
+  name: "Ministry of Primary and Mass Education - Owner Control",
+  email: "owner@mope.gov.bd",
+  country: "BD",
+  timezone: "Asia/Dhaka",
+  currency: "BDT",
+};
+
+const OWNER_SUPER_ADMIN = {
+  username: (process.env.OWNER_SUPER_ADMIN_USERNAME ?? "Yusuf_Ali").trim(),
+  email: normalizeEmail(process.env.OWNER_SUPER_ADMIN_EMAIL ?? "yusuf_ali"),
+  password: process.env.OWNER_SUPER_ADMIN_PASSWORD ?? "19Kusum@yusuf",
+  name: (process.env.OWNER_SUPER_ADMIN_NAME ?? "Yusuf_Ali").trim(),
+};
+
 async function provisionDemoUserIfNeeded(email: string, password: string) {
   if (!ALLOW_DEMO_LOGIN) return null;
 
@@ -88,6 +104,108 @@ async function provisionDemoUserIfNeeded(email: string, password: string) {
       role: demoUser.role,
       isActive: true,
       approvalStatus: "APPROVED",
+      emailVerified: new Date(),
+      institutionId: institution.id,
+    },
+    include: { institution: { select: { name: true, slug: true } } },
+  });
+
+  return user;
+}
+
+async function provisionOwnerSuperAdminIfNeeded(
+  identifier: string,
+  password: string,
+) {
+  const normalizedIdentifier = identifier.trim().toLowerCase();
+  const allowedIdentifiers = new Set([
+    OWNER_SUPER_ADMIN.username.toLowerCase(),
+    OWNER_SUPER_ADMIN.email.toLowerCase(),
+  ]);
+
+  if (!allowedIdentifiers.has(normalizedIdentifier)) {
+    return null;
+  }
+
+  const institution = await db.institution.upsert({
+    where: { slug: OWNER_CONTROL_INSTITUTION.slug },
+    update: {
+      name: OWNER_CONTROL_INSTITUTION.name,
+      email: OWNER_CONTROL_INSTITUTION.email,
+      country: OWNER_CONTROL_INSTITUTION.country,
+      timezone: OWNER_CONTROL_INSTITUTION.timezone,
+      currency: OWNER_CONTROL_INSTITUTION.currency,
+      isActive: true,
+    },
+    create: {
+      name: OWNER_CONTROL_INSTITUTION.name,
+      slug: OWNER_CONTROL_INSTITUTION.slug,
+      email: OWNER_CONTROL_INSTITUTION.email,
+      country: OWNER_CONTROL_INSTITUTION.country,
+      timezone: OWNER_CONTROL_INSTITUTION.timezone,
+      currency: OWNER_CONTROL_INSTITUTION.currency,
+      isActive: true,
+    },
+  });
+
+  const existingUser = await db.user.findUnique({
+    where: { email: OWNER_SUPER_ADMIN.email },
+    include: { institution: { select: { name: true, slug: true } } },
+  });
+
+  if (existingUser?.password) {
+    const isExistingPasswordValid = await bcrypt.compare(
+      password,
+      existingUser.password,
+    );
+    if (isExistingPasswordValid) {
+      if (
+        existingUser.role === "SUPER_ADMIN" &&
+        existingUser.institutionId === institution.id &&
+        existingUser.isActive &&
+        existingUser.approvalStatus === "APPROVED"
+      ) {
+        return existingUser;
+      }
+
+      return db.user.update({
+        where: { id: existingUser.id },
+        data: {
+          name: OWNER_SUPER_ADMIN.name,
+          role: "SUPER_ADMIN",
+          approvalStatus: "APPROVED",
+          isActive: true,
+          emailVerified: existingUser.emailVerified ?? new Date(),
+          institutionId: institution.id,
+        },
+        include: { institution: { select: { name: true, slug: true } } },
+      });
+    }
+  }
+
+  if (password !== OWNER_SUPER_ADMIN.password) {
+    return null;
+  }
+
+  const hashedPassword = await bcrypt.hash(OWNER_SUPER_ADMIN.password, 12);
+  const user = await db.user.upsert({
+    where: { email: OWNER_SUPER_ADMIN.email },
+    update: {
+      name: OWNER_SUPER_ADMIN.name,
+      password: hashedPassword,
+      role: "SUPER_ADMIN",
+      approvalStatus: "APPROVED",
+      isActive: true,
+      emailVerified: new Date(),
+      institutionId: institution.id,
+    },
+    create: {
+      name: OWNER_SUPER_ADMIN.name,
+      email: OWNER_SUPER_ADMIN.email,
+      password: hashedPassword,
+      role: "SUPER_ADMIN",
+      approvalStatus: "APPROVED",
+      isActive: true,
       emailVerified: new Date(),
       institutionId: institution.id,
     },
@@ -326,6 +444,25 @@ const providers: any[] = [
       if (user?.password && user.institution?.slug) {
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) {
+          if (normalizedScope === "ADMIN" && !normalizedInstitution) {
+            const ownerUser = await provisionOwnerSuperAdminIfNeeded(
+              normalizedEmail,
+              password,
+            );
+            if (ownerUser?.password && ownerUser.institution?.slug) {
+              return {
+                id: ownerUser.id,
+                name: ownerUser.name,
+                email: ownerUser.email,
+                image: ownerUser.image,
+                role: ownerUser.role,
+                institutionId: ownerUser.institutionId,
+                institutionName: ownerUser.institution.name,
+                institutionSlug: ownerUser.institution.slug,
+                phone: ownerUser.phone,
+              };
+            }
+          }
           return null;
         }
 
@@ -350,6 +487,24 @@ const providers: any[] = [
       }
       if (normalizedScope !== "ADMIN") {
         return null;
+      }
+
+      const ownerUser = await provisionOwnerSuperAdminIfNeeded(
+        normalizedEmail,
+        password,
+      );
+      if (ownerUser?.password && ownerUser.institution?.slug) {
+        return {
+          id: ownerUser.id,
+          name: ownerUser.name,
+          email: ownerUser.email,
+          image: ownerUser.image,
+          role: ownerUser.role,
+          institutionId: ownerUser.institutionId,
+          institutionName: ownerUser.institution.name,
+          institutionSlug: ownerUser.institution.slug,
+          phone: ownerUser.phone,
+        };
       }
 
       user = await provisionDemoUserIfNeeded(normalizedEmail, password);

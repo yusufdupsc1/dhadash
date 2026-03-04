@@ -18,13 +18,24 @@ export async function ownerSignInAction(formData: FormData) {
   }
 
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       scope: "ADMIN",
       loginMode: "PASSWORD",
       email: username.toLowerCase(),
       password,
-      redirectTo: "/dashboard/owner",
+      redirect: false,
     });
+
+    if (typeof result === "string" && result.includes("error=")) {
+      redirect(OWNER_LOGIN_ERROR_REDIRECT);
+    }
+
+    const maybeError = (result as { error?: string } | undefined)?.error;
+    if (maybeError) {
+      redirect(OWNER_LOGIN_ERROR_REDIRECT);
+    }
+
+    redirect("/dashboard/owner");
   } catch (error) {
     if (error instanceof AuthError) {
       redirect(OWNER_LOGIN_ERROR_REDIRECT);
