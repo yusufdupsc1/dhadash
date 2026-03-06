@@ -12,7 +12,7 @@ const AUTH_SECRETS = [
   process.env.NEXTAUTH_SECRET,
 ].filter((secret): secret is string => Boolean(secret));
 
-const ALLOW_DEMO_LOGIN = process.env.ALLOW_DEMO_LOGIN !== "false";
+const ALLOW_DEMO_LOGIN = process.env.ALLOW_DEMO_LOGIN === "true";
 
 const DEMO_INSTITUTION = {
   slug: "dhadash-demo",
@@ -49,11 +49,25 @@ const OWNER_CONTROL_INSTITUTION = {
 };
 
 const OWNER_SUPER_ADMIN = {
-  username: (process.env.OWNER_SUPER_ADMIN_USERNAME ?? "Yusuf_Ali").trim(),
-  email: normalizeEmail(process.env.OWNER_SUPER_ADMIN_EMAIL ?? "yusuf_ali"),
-  password: process.env.OWNER_SUPER_ADMIN_PASSWORD ?? "19Kusum@yusuf",
+  username: (process.env.OWNER_SUPER_ADMIN_USERNAME ?? "").trim().toLowerCase(),
+  email: normalizeEmail(process.env.OWNER_SUPER_ADMIN_EMAIL ?? ""),
+  password: (process.env.OWNER_SUPER_ADMIN_PASSWORD ?? "").trim(),
   name: (process.env.OWNER_SUPER_ADMIN_NAME ?? "Yusuf_Ali").trim(),
 };
+
+const OWNER_SUPER_ADMIN_EMAIL_RESOLVED =
+  OWNER_SUPER_ADMIN.email ||
+  (OWNER_SUPER_ADMIN.username
+    ? `owner+${OWNER_SUPER_ADMIN.username}@local.invalid`
+    : "");
+
+const OWNER_SUPER_ADMIN_IDENTIFIERS = new Set(
+  [OWNER_SUPER_ADMIN.username, OWNER_SUPER_ADMIN.email]
+    .map((v) => v.trim().toLowerCase())
+    .filter(Boolean),
+);
+const OWNER_SUPER_ADMIN_ENABLED =
+  OWNER_SUPER_ADMIN.password.length > 0 && OWNER_SUPER_ADMIN_IDENTIFIERS.size > 0;
 
 async function provisionDemoUserIfNeeded(email: string, password: string) {
   if (!ALLOW_DEMO_LOGIN) return null;
@@ -117,15 +131,34 @@ async function provisionOwnerSuperAdminIfNeeded(
   identifier: string,
   password: string,
 ) {
-  const normalizedIdentifier = identifier.trim().toLowerCase();
-  const allowedIdentifiers = new Set([
-    OWNER_SUPER_ADMIN.username.toLowerCase(),
-    OWNER_SUPER_ADMIN.email.toLowerCase(),
-  ]);
-
-  if (!allowedIdentifiers.has(normalizedIdentifier)) {
+  if (!OWNER_SUPER_ADMIN_ENABLED) {
     return null;
   }
+
+  if (!OWNER_SUPER_ADMIN_EMAIL_RESOLVED) {
+    return null;
+  }
+
+  const normalizedIdentifier = identifier.trim().toLowerCase();
+  if (!normalizedIdentifier || !OWNER_SUPER_ADMIN_IDENTIFIERS.size) {
+    return null;
+  }
+
+  if (!OWNER_SUPER_ADMIN_IDENTIFIERS.has(normalizedIdentifier)) {
+    return null;
+  }
+
+  const ownerIdentityWhere = [
+    ...(OWNER_SUPER_ADMIN.email
+      ? [{ email: { equals: OWNER_SUPER_ADMIN.email, mode: "insensitive" as const } }]
+      : []),
+    ...(OWNER_SUPER_ADMIN.username
+      ? [{ username: { equals: OWNER_SUPER_ADMIN.username, mode: "insensitive" as const } }]
+      : []),
+    ...(OWNER_SUPER_ADMIN.username
+      ? [{ email: { equals: OWNER_SUPER_ADMIN.username, mode: "insensitive" as const } }]
+      : []),
+  ];
 
   const institution = await db.institution.upsert({
     where: { slug: OWNER_CONTROL_INSTITUTION.slug },
@@ -148,8 +181,13 @@ async function provisionOwnerSuperAdminIfNeeded(
     },
   });
 
-  const existingUser = await db.user.findUnique({
-    where: { email: OWNER_SUPER_ADMIN.email },
+  const existingUser = await db.user.findFirst({
+    where: {
+      OR: ownerIdentityWhere,
+      role: "SUPER_ADMIN",
+      approvalStatus: "APPROVED",
+      isActive: true,
+    },
     include: { institution: { select: { name: true, slug: true } } },
   });
 
@@ -172,6 +210,8 @@ async function provisionOwnerSuperAdminIfNeeded(
         where: { id: existingUser.id },
         data: {
           name: OWNER_SUPER_ADMIN.name,
+          username: OWNER_SUPER_ADMIN.username || existingUser.username,
+          email: OWNER_SUPER_ADMIN_EMAIL_RESOLVED,
           role: "SUPER_ADMIN",
           approvalStatus: "APPROVED",
           isActive: true,
@@ -188,29 +228,36 @@ async function provisionOwnerSuperAdminIfNeeded(
   }
 
   const hashedPassword = await bcrypt.hash(OWNER_SUPER_ADMIN.password, 12);
-  const user = await db.user.upsert({
-    where: { email: OWNER_SUPER_ADMIN.email },
-    update: {
-      name: OWNER_SUPER_ADMIN.name,
-      password: hashedPassword,
-      role: "SUPER_ADMIN",
-      approvalStatus: "APPROVED",
-      isActive: true,
-      emailVerified: new Date(),
-      institutionId: institution.id,
-    },
-    create: {
-      name: OWNER_SUPER_ADMIN.name,
-      email: OWNER_SUPER_ADMIN.email,
-      password: hashedPassword,
-      role: "SUPER_ADMIN",
-      approvalStatus: "APPROVED",
-      isActive: true,
-      emailVerified: new Date(),
-      institutionId: institution.id,
-    },
-    include: { institution: { select: { name: true, slug: true } } },
-  });
+  const user = existingUser
+    ? await db.user.update({
+        where: { id: existingUser.id },
+        data: {
+          name: OWNER_SUPER_ADMIN.name,
+          username: OWNER_SUPER_ADMIN.username || existingUser.username,
+          email: OWNER_SUPER_ADMIN_EMAIL_RESOLVED,
+          password: hashedPassword,
+          role: "SUPER_ADMIN",
+          approvalStatus: "APPROVED",
+          isActive: true,
+          emailVerified: existingUser.emailVerified ?? new Date(),
+          institutionId: institution.id,
+        },
+        include: { institution: { select: { name: true, slug: true } } },
+      })
+    : await db.user.create({
+        data: {
+          name: OWNER_SUPER_ADMIN.name,
+          username: OWNER_SUPER_ADMIN.username || null,
+          email: OWNER_SUPER_ADMIN_EMAIL_RESOLVED,
+          password: hashedPassword,
+          role: "SUPER_ADMIN",
+          approvalStatus: "APPROVED",
+          isActive: true,
+          emailVerified: new Date(),
+          institutionId: institution.id,
+        },
+        include: { institution: { select: { name: true, slug: true } } },
+      });
 
   return user;
 }
@@ -319,7 +366,7 @@ const providers: any[] = [
       const institutionInput = credentials?.institution;
       const scopeInput = credentials?.scope;
       const loginModeInput = credentials?.loginMode;
-      const email = credentials?.email;
+      const identifierInput = credentials?.email;
       const phoneInput = credentials?.phone;
       const otpCodeInput = credentials?.otpCode;
       const otpChallengeInput = credentials?.otpChallengeId;
@@ -417,18 +464,21 @@ const providers: any[] = [
       }
 
       if (
-        !email ||
+        !identifierInput ||
         !password ||
-        typeof email !== "string" ||
+        typeof identifierInput !== "string" ||
         typeof password !== "string"
       ) {
         return null;
       }
 
-      const normalizedEmail = normalizeEmail(email);
+      const normalizedIdentifier = normalizeEmail(identifierInput);
       let user = await db.user.findFirst({
         where: {
-          email: { equals: normalizedEmail, mode: "insensitive" },
+          OR: [
+            { email: { equals: normalizedIdentifier, mode: "insensitive" } },
+            { username: { equals: normalizedIdentifier, mode: "insensitive" } },
+          ],
           role: userRoleFilter,
           isActive: true,
           approvalStatus: "APPROVED",
@@ -446,7 +496,7 @@ const providers: any[] = [
         if (!isValid) {
           if (normalizedScope === "ADMIN" && !normalizedInstitution) {
             const ownerUser = await provisionOwnerSuperAdminIfNeeded(
-              normalizedEmail,
+              normalizedIdentifier,
               password,
             );
             if (ownerUser?.password && ownerUser.institution?.slug) {
@@ -490,7 +540,7 @@ const providers: any[] = [
       }
 
       const ownerUser = await provisionOwnerSuperAdminIfNeeded(
-        normalizedEmail,
+        normalizedIdentifier,
         password,
       );
       if (ownerUser?.password && ownerUser.institution?.slug) {
@@ -507,7 +557,7 @@ const providers: any[] = [
         };
       }
 
-      user = await provisionDemoUserIfNeeded(normalizedEmail, password);
+      user = await provisionDemoUserIfNeeded(normalizedIdentifier, password);
       if (!user?.password || !user.isActive) return null;
 
       return {

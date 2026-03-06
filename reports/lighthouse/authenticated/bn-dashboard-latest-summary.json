@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-03-06T02-51-31",
+  "runLabel": "post-refactor-auth",
+  "route": "/bn/dashboard",
+  "baseUrl": "http://127.0.0.1:3100",
+  "htmlPath": "/home/neo/Videos/dhadash/reports/lighthouse/authenticated/bn-dashboard-post-refactor-auth-2026-03-06T02-51-31.html",
+  "jsonPath": "/home/neo/Videos/dhadash/reports/lighthouse/authenticated/bn-dashboard-post-refactor-auth-2026-03-06T02-51-31.json",
+  "latestHtmlPath": "/home/neo/Videos/dhadash/reports/lighthouse/authenticated/bn-dashboard-latest.html",
+  "latestJsonPath": "/home/neo/Videos/dhadash/reports/lighthouse/authenticated/bn-dashboard-latest.json",
+  "metrics": {
+    "performanceScore": 0,
+    "fcp": "–",
+    "lcp": "–",
+    "tbt": "–",
+    "cls": "–",
+    "si": "–",
+    "ttfb": "–"
+  }
+}

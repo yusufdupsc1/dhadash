@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { GovtMonogram } from "@/components/landing/govt-monogram";

@@ -30,7 +30,10 @@
     "analyze": "ANALYZE=true next build",
     "openapi:check": "node scripts/check-openapi.mjs",
     "perf:trace": "node scripts/trace.mjs",
-    "perf:lighthouse": "node scripts/lh.mjs"
+    "perf:lighthouse": "node scripts/lh.mjs",
+    "perf:auth:state": "corepack pnpm exec tsx scripts/create-auth-state.ts",
+    "perf:lighthouse:auth:dashboard": "node scripts/lh-auth-dashboard.mjs",
+    "perf:lighthouse:auth": "node scripts/perf-auth-lh.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

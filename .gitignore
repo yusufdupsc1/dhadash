@@ -32,6 +32,8 @@ coverage/
 playwright-report/
 test-results/
 .lighthouseci/
+reports/lighthouse/authenticated/storage-state.json
+reports/lighthouse/authenticated/auth-capture-blocked.log
 
 # OS/editor
 .DS_Store

@@ -142,3 +142,60 @@ AUTH_COOKIE="next-auth.session-token=<value>" pnpm perf:trace
 npx playwright show-trace perf/trace-desktop.zip
 npx playwright show-trace perf/trace-mobile.zip
 ```
+
+
+---
+
+## 7. Authenticated Lighthouse Workflow (Post-login / Dashboard)
+
+Single-command local run (no manual browser interaction after env is set):
+
+```bash
+E2E_ADMIN_EMAIL=<email> E2E_ADMIN_PASSWORD=<password> E2E_ADMIN_SCHOOL_CODE=<optional> pnpm perf:lighthouse:auth
+```
+
+Implemented flow:
+
+1. [`scripts/perf-auth-lh.mjs`](scripts/perf-auth-lh.mjs:1) builds app and starts standalone server.
+2. [`scripts/create-auth-state.ts`](scripts/create-auth-state.ts:1) logs in with Playwright using env credentials and writes [`reports/lighthouse/authenticated/storage-state.json`](reports/lighthouse/authenticated/storage-state.json).
+3. [`scripts/lh-auth-dashboard.mjs`](scripts/lh-auth-dashboard.mjs:1) converts storage state cookies to request header and runs Lighthouse against authenticated dashboard route.
+4. Artifacts are persisted to [`reports/lighthouse/authenticated/`](reports/lighthouse/authenticated/) with deterministic naming and latest aliases.
+
+### Current post-refactor run status
+
+- Workflow/tooling: ✅ implemented.
+- Playwright storageState authentication workflow: ✅ implemented via [`scripts/create-auth-state.ts`](scripts/create-auth-state.ts:1).
+- Standalone server launch path: ✅ implemented via [`scripts/perf-auth-lh.mjs`](scripts/perf-auth-lh.mjs:1).
+- Artifact persistence: ✅ implemented (HTML + JSON + summary in [`reports/lighthouse/authenticated/`](reports/lighthouse/authenticated/)).
+- Metric capture for authenticated `/dashboard`: ⚠️ **officially blocked** pending valid credentials.
+
+#### Blocked capture evidence
+
+- Exact executed command:
+  - `E2E_ADMIN_EMAIL=admin@school.edu E2E_ADMIN_PASSWORD=admin123 corepack pnpm run perf:lighthouse:auth > reports/lighthouse/authenticated/auth-capture-blocked.log 2>&1`
+- Evidence log path:
+  - [`reports/lighthouse/authenticated/auth-capture-blocked.log`](reports/lighthouse/authenticated/auth-capture-blocked.log:1)
+- Recorded exit status:
+  - **1** (see `ELIFECYCLE Command failed with exit code 1` in the log at [`reports/lighthouse/authenticated/auth-capture-blocked.log`](reports/lighthouse/authenticated/auth-capture-blocked.log:132))
+- Recorded failure detail:
+  - Playwright auth state generation timed out waiting for dashboard redirect in [`loginAsAdmin()`](tests/e2e/helpers/auth.ts:18) during [`scripts/create-auth-state.ts`](scripts/create-auth-state.ts:19), with `[AUTH_STATE] failed page.waitForURL: Timeout 60000ms exceeded.` in the same log.
+
+### Baseline comparison note
+
+Previous baseline (from [`perf/lh/summary-after.json`](perf/lh/summary-after.json:1)):
+- `/dashboard` perf score: **58**
+- LCP: **2.9 s**
+- TBT: **1,830 ms**
+
+Authenticated post-refactor deltas for `/dashboard` remain **unchanged/pending** until a successful authenticated capture completes with valid credentials.
+
+### Rerun instruction (with real credentials)
+
+Use existing env var names with valid values and rerun:
+
+```bash
+E2E_ADMIN_EMAIL=<real-admin-email> \
+E2E_ADMIN_PASSWORD=<real-admin-password> \
+E2E_ADMIN_SCHOOL_CODE=<optional-school-code> \
+corepack pnpm run perf:lighthouse:auth
+```
