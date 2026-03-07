@@ -58,7 +58,7 @@ Required repository secrets for Docker Hub push:
 
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_TOKEN` (recommended: Docker Hub access token, not account password)
-- `DOCKERHUB_IMAGE` (optional override, e.g. `bd-gps1` or `yusufdupsc1/bd-gps1`)
+- `DOCKERHUB_IMAGE` (optional override, e.g. `bd-gps1` or `yusufdupsc1/bd-gps`)
 
 Notes:
 

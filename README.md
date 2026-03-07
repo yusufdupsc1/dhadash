@@ -1,7 +1,7 @@
 # BD-GPS
 
-[![CI / CD](https://github.com/yusufdupsc1/BD-GPS/actions/workflows/ci.yml/badge.svg)](https://github.com/yusufdupsc1/BD-GPS/actions/workflows/ci.yml)
-[![GHCR](https://img.shields.io/badge/GHCR-ghcr.io%2Fyusufdupsc1%2Fbd-gps-2496ED?logo=docker)](https://github.com/yusufdupsc1/BD-GPS/pkgs/container/bd-gps)
+[![CI / CD](https://github.com/yusufdupsc1/bd-gps/actions/workflows/ci.yml/badge.svg)](https://github.com/yusufdupsc1/bd-gps/actions/workflows/ci.yml)
+[![GHCR](https://img.shields.io/badge/GHCR-ghcr.io%2Fyusufdupsc1%2Fbd-gps-2496ED?logo=docker)](https://github.com/yusufdupsc1/bd-gps/pkgs/container/bd-gps)
 [![Docker Hub](https://img.shields.io/docker/pulls/yusufdupsc1/bd-gps?logo=docker&label=Docker%20Pulls)](https://hub.docker.com/r/yusufdupsc1/bd-gps)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
@@ -74,8 +74,8 @@ For deeper design details, see [Architecture](./docs/ARCHITECTURE.md).
 ### Quick Start
 
 ```bash
-git clone https://github.com/yusufdupsc1/BD-GPS.git
-cd BD-GPS
+git clone https://github.com/yusufdupsc1/bd-gps.git
+cd bd-gps
 pnpm install
 cp .env.example .env.local
 pnpm db:push
