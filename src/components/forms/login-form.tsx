@@ -455,8 +455,12 @@ export function LoginForm({
     }
   };
 
-  const applyDemoCredentials = (email: string, password: string) => {
-    setValue("scope", lockedScope ?? "ADMIN", { shouldValidate: true });
+  const applyDemoCredentials = (
+    email: string,
+    password: string,
+    scope: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" = "ADMIN",
+  ) => {
+    setValue("scope", lockedScope ?? scope, { shouldValidate: true });
     setValue("loginMode", "PASSWORD", { shouldValidate: true });
     setValue(
       "institution",
@@ -816,7 +820,11 @@ export function LoginForm({
               <button
                 type="button"
                 onClick={() =>
-                  applyDemoCredentials("teacher.demo@school.edu", "teacher123")
+                  applyDemoCredentials(
+                    "teacher.demo@school.edu",
+                    "teacher123",
+                    "TEACHER",
+                  )
                 }
                 className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
                 disabled={isPending || isSendingOtp}
@@ -826,7 +834,11 @@ export function LoginForm({
               <button
                 type="button"
                 onClick={() =>
-                  applyDemoCredentials("student.demo@school.edu", "student123")
+                  applyDemoCredentials(
+                    "student.demo@school.edu",
+                    "student123",
+                    "STUDENT",
+                  )
                 }
                 className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
                 disabled={isPending || isSendingOtp}
@@ -836,7 +848,11 @@ export function LoginForm({
               <button
                 type="button"
                 onClick={() =>
-                  applyDemoCredentials("parent.demo@school.edu", "parent123")
+                  applyDemoCredentials(
+                    "parent.demo@school.edu",
+                    "parent123",
+                    "PARENT",
+                  )
                 }
                 className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
                 disabled={isPending || isSendingOtp}
