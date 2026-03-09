@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev: next",
+      "type": "shell",
+      "command": "corepack pnpm dev",
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "fast: type-check",
+      "type": "shell",
+      "command": "corepack pnpm type-check",
+      "group": "test",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "fast: lint changed",
+      "type": "shell",
+      "command": "bash -lc \"git diff --name-only --diff-filter=ACMRTUXB HEAD | grep -E '\\.(ts|tsx|js|jsx)$' | xargs -r corepack pnpm exec eslint\"",
+      "group": "test",
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "fast: test related",
+      "type": "shell",
+      "command": "corepack pnpm test --run",
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

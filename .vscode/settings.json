@@ -1,6 +1,8 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.preferences.includePackageJsonAutoImports": "on",
   "typescript.preferences.preferTypeOnlyAutoImports": true,
   "typescript.suggest.autoImports": true,
@@ -19,5 +21,19 @@
   "editor.gotoLocation.multipleDefinitions": "goto",
   "editor.gotoLocation.multipleReferences": "peek",
   "editor.gotoLocation.multipleImplementations": "peek",
+  "search.exclude": {
+    "**/.next": true,
+    "**/node_modules": true,
+    "**/perf": true,
+    "**/reports": true,
+    "**/*.zip": true,
+    "**/*_output*.txt": true
+  },
+  "files.watcherExclude": {
+    "**/.next/**": true,
+    "**/node_modules/**": true,
+    "**/perf/**": true,
+    "**/reports/**": true
+  },
   "files.eol": "\n"
 }
