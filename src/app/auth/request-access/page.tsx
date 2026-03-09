@@ -85,7 +85,7 @@ export default function RequestAccessPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
-      <div className="w-full max-w-md space-y-6 rounded-xl border border-border bg-card p-7 shadow-sm">
+      <div className="w-full max-w-md space-y-6 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6 lg:max-w-lg">
         <div className="text-center">
           <div className="mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
             <UserCheck className="h-5 w-5 text-primary" />
@@ -120,7 +120,7 @@ export default function RequestAccessPage() {
 
           <div className="space-y-1.5">
             <Label>Requested Scope</Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 gap-2 xs:grid-cols-3">
               {scopeOptions.map((option) => (
                 <button
                   key={option.value}

@@ -54,7 +54,7 @@ export default defineConfig({
   webServer: {
     command: `pnpm exec next build --webpack && pnpm exec next start -H ${host} -p ${port}`,
     url: appUrl,
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 420000,
     env: {
       ...process.env,
@@ -62,6 +62,12 @@ export default defineConfig({
       NEXT_PUBLIC_APP_URL: appUrl,
       AUTH_SECRET:
         process.env.AUTH_SECRET || "playwright-secret-32-chars-minimum",
+      OWNER_SUPER_ADMIN_USERNAME:
+        process.env.OWNER_SUPER_ADMIN_USERNAME || "yusuf_ali",
+      OWNER_SUPER_ADMIN_EMAIL:
+        process.env.OWNER_SUPER_ADMIN_EMAIL || "yusuf_ali",
+      OWNER_SUPER_ADMIN_PASSWORD:
+        process.env.OWNER_SUPER_ADMIN_PASSWORD || "yusuf_ali",
     },
   },
 });

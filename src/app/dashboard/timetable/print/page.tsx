@@ -104,7 +104,7 @@ export default async function TimetablePrintPage({ searchParams }: PageProps) {
         </p>
       </header>
 
-      <section className="mb-4 grid grid-cols-2 gap-2 text-sm">
+      <section className="mb-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
         <p>
           <span className="font-semibold">তারিখ:</span> {generatedDate}
         </p>
@@ -142,7 +142,7 @@ export default async function TimetablePrintPage({ searchParams }: PageProps) {
         </tbody>
       </table>
 
-      <footer className="mt-12 grid grid-cols-2 gap-8 text-center text-sm">
+      <footer className="mt-12 grid grid-cols-1 gap-8 text-center text-sm sm:grid-cols-2">
         <div>
           <p className="pt-10">....................................</p>
           <p className="font-semibold">শ্রেণি শিক্ষক</p>

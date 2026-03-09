@@ -1,0 +1,4 @@
+
+> bd-gps@2.0.3 type-check /home/neo/Music/bd-gps
+> tsc --noEmit
+

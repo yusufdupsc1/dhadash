@@ -1,0 +1,375 @@
+
+> bd-gps@2.0.3 test:e2e /home/neo/Music/bd-gps
+> playwright test
+
+[WebServer] [33m[1m⚠[22m[39m "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+
+Running 29 tests using 1 worker
+
+  ✘   1 [chromium] › tests/e2e/academics/student.spec.ts:9:3 › Academic Route Smoke › students page renders (27.2s)
+  ✘   2 [chromium] › tests/e2e/academics/student.spec.ts:18:3 › Academic Route Smoke › teachers page renders (25.3s)
+  ✘   3 [chromium] › tests/e2e/academics/student.spec.ts:26:3 › Academic Route Smoke › classes page renders tabs (29.2s)
+  ✘   4 [chromium] › tests/e2e/academics/student.spec.ts:34:3 › Academic Route Smoke › attendance page renders (31.1s)
+  ✓   5 [chromium] › tests/e2e/academics/student.spec.ts:42:3 › Academic Route Smoke › grades page renders (15.9s)
+  ✓   6 [chromium] › tests/e2e/auth/login.spec.ts:5:3 › Authentication Flows › login page renders core fields (1.8s)
+[WebServer] [31m[auth][error][0m CredentialsSignin: Read more at https://errors.authjs.dev#credentialssignin
+[WebServer]     at fl (/home/neo/Music/bd-gps/.next/server/chunks/3185.js:404:40971)
+[WebServer]     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[WebServer]     at async fu (/home/neo/Music/bd-gps/.next/server/chunks/3185.js:404:50396)
+[WebServer]     at async fw (/home/neo/Music/bd-gps/.next/server/chunks/3185.js:404:54649)
+[WebServer]     at async rW.do (/home/neo/Music/bd-gps/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-d_2884e55c18333d436dfed79a72263e38/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:5:20169)
+[WebServer]     at async rW.handle (/home/neo/Music/bd-gps/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-d_2884e55c18333d436dfed79a72263e38/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:5:24949)
+[WebServer]     at async k (/home/neo/Music/bd-gps/.next/server/app/api/auth/[...nextauth]/route.js:1:3914)
+[WebServer]     at async rW.handleResponse (/home/neo/Music/bd-gps/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-d_2884e55c18333d436dfed79a72263e38/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:1:104113)
+[WebServer]     at async j (/home/neo/Music/bd-gps/.next/server/app/api/auth/[...nextauth]/route.js:1:4926)
+[WebServer]     at async Module.D (/home/neo/Music/bd-gps/.next/server/app/api/auth/[...nextauth]/route.js:1:5993)
+  ✓   7 [chromium] › tests/e2e/auth/login.spec.ts:15:3 › Authentication Flows › invalid credentials show error (3.3s)
+  ✓   8 [chromium] › tests/e2e/auth/login.spec.ts:27:3 › Authentication Flows › demo admin can sign in (5.7s)
+  ✓   9 [chromium] › tests/e2e/auth/login.spec.ts:33:3 › Authentication Flows › logout uses local login redirect and avoids external host (5.1s)
+  ✓  10 [chromium] › tests/e2e/auth/login.spec.ts:47:3 › Authentication Flows › register page renders current fields (1.0s)
+  ✓  11 [chromium] › tests/e2e/auth/login.spec.ts:60:3 › Authentication Flows › register form validates password mismatch (925ms)
+  ✓  12 [chromium] › tests/e2e/auth/login.spec.ts:72:3 › Authentication Flows › forgot password shows generic success message (6.0s)
+  ✓  13 [chromium] › tests/e2e/auth/login.spec.ts:81:3 › Authentication Flows › owner super admin can sign in from landing panel (11.7s)
+  ✓  14 [chromium] › tests/e2e/auth/login.spec.ts:101:3 › Authentication Flows › owner super admin can sign in from auth login form with username (7.3s)
+  ✓  15 [chromium] › tests/e2e/dashboard/bn-dashboard-smoke.spec.ts:5:3 › BN dashboard smoke › login with env credentials and render /bn/dashboard essentials (17.7s)
+  ✓  16 [chromium] › tests/e2e/dashboard/navigation.spec.ts:7:3 › Dashboard responsive navigation › shows primary sidebar nav on desktop (3.3s)
+  ✓  17 [chromium] › tests/e2e/dashboard/navigation.spec.ts:19:3 › Dashboard responsive navigation › shows mobile bottom nav on small screens (4.2s)
+  ✓  18 [chromium] › tests/e2e/dashboard/navigation.spec.ts:28:3 › Dashboard responsive navigation › opens mobile drawer menu and navigates from menu links (10.8s)
+  ✘  19 [chromium] › tests/e2e/dashboard/navigation.spec.ts:46:3 › Dashboard responsive navigation › keeps quick actions compact and card taps route to CRUD pages (26.9s)
+  ✘  20 [chromium] › tests/e2e/dashboard/navigation.spec.ts:62:3 › Dashboard responsive navigation › shows back-to-top FAB after scrolling and returns to top (31.9s)
+  ✓  21 [chromium] › tests/e2e/dashboard/smoke.spec.ts:21:3 › Dashboard route smoke › all dashboard routes render without generic server error (1.4m)
+  ✘  22 [chromium] › tests/e2e/finance/payment.spec.ts:9:3 › Finance Dashboard › finance page renders summary and table (1.0m)
+  ✓  23 [chromium] › tests/e2e/finance/payment.spec.ts:18:3 › Finance Dashboard › create fee dialog opens (1.2m)
+  ✓  24 [chromium] › tests/e2e/finance/payment.spec.ts:27:3 › Finance Dashboard › finance page has no generic app error (30.7s)
+  ✓  25 [chromium] › tests/e2e/landing/landing.spec.ts:6:3 › Landing page › renders hero heading and primary CTA (6.4s)
+  ✓  26 [chromium] › tests/e2e/landing/landing.spec.ts:23:3 › Landing page › renders module and pricing sections (9.1s)
+  ✘  27 [chromium] › tests/e2e/landing/landing.spec.ts:36:3 › Landing page › renders owner super admin sign-in panel (31.3s)
+  ✘  28 [chromium] › tests/e2e/perf-regression.spec.ts:7:3 › Performance Regression Checks › hamburger menu opens within performance target (37.2s)
+  ✓  29 [chromium] › tests/e2e/perf-regression.spec.ts:31:3 › Performance Regression Checks › 3 navigation transitions work smoothly (28.3s)
+
+
+  1) [chromium] › tests/e2e/academics/student.spec.ts:9:3 › Academic Route Smoke › students page renders 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Students' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Students' })[22m
+
+
+      10 |     await page.goto("/dashboard/students", { waitUntil: "domcontentloaded" });
+      11 |
+    > 12 |     await expect(page.getByRole("heading", { name: "Students" })).toBeVisible();
+         |                                                                   ^
+      13 |     await expect(
+      14 |       page.getByRole("button", { name: "Ready-Made Reports" }),
+      15 |     ).toBeVisible();
+        at /home/neo/Music/bd-gps/tests/e2e/academics/student.spec.ts:12:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-Route-Smoke-students-page-renders-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-Route-Smoke-students-page-renders-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/academics-student-Academic-Route-Smoke-students-page-renders-chromium/error-context.md
+
+  2) [chromium] › tests/e2e/academics/student.spec.ts:18:3 › Academic Route Smoke › teachers page renders 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: /teachers/i })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: /teachers/i })[22m
+
+
+      21 |     await expect(
+      22 |       page.getByRole("heading", { name: /teachers/i }),
+    > 23 |     ).toBeVisible();
+         |       ^
+      24 |   });
+      25 |
+      26 |   test("classes page renders tabs", async ({ page }) => {
+        at /home/neo/Music/bd-gps/tests/e2e/academics/student.spec.ts:23:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-Route-Smoke-teachers-page-renders-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-Route-Smoke-teachers-page-renders-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/academics-student-Academic-Route-Smoke-teachers-page-renders-chromium/error-context.md
+
+  3) [chromium] › tests/e2e/academics/student.spec.ts:26:3 › Academic Route Smoke › classes page renders tabs 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: /classes/i })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: /classes/i })[22m
+
+
+      27 |     await page.goto("/dashboard/classes", { waitUntil: "domcontentloaded" });
+      28 |
+    > 29 |     await expect(page.getByRole("heading", { name: /classes/i })).toBeVisible();
+         |                                                                   ^
+      30 |     await expect(page.getByRole("tab", { name: /classes/i })).toBeVisible();
+      31 |     await expect(page.getByRole("tab", { name: /subjects/i })).toBeVisible();
+      32 |   });
+        at /home/neo/Music/bd-gps/tests/e2e/academics/student.spec.ts:29:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-048e0-e-classes-page-renders-tabs-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-048e0-e-classes-page-renders-tabs-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/academics-student-Academic-048e0-e-classes-page-renders-tabs-chromium/error-context.md
+
+  4) [chromium] › tests/e2e/academics/student.spec.ts:34:3 › Academic Route Smoke › attendance page renders 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Attendance', exact: true })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Attendance', exact: true })[22m
+
+
+      37 |     await expect(
+      38 |       page.getByRole("heading", { name: "Attendance", exact: true }),
+    > 39 |     ).toBeVisible();
+         |       ^
+      40 |   });
+      41 |
+      42 |   test("grades page renders", async ({ page }) => {
+        at /home/neo/Music/bd-gps/tests/e2e/academics/student.spec.ts:39:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-81d10-oke-attendance-page-renders-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/academics-student-Academic-81d10-oke-attendance-page-renders-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/academics-student-Academic-81d10-oke-attendance-page-renders-chromium/error-context.md
+
+  5) [chromium] › tests/e2e/dashboard/navigation.spec.ts:46:3 › Dashboard responsive navigation › keeps quick actions compact and card taps route to CRUD pages 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByTestId('quick-actions-grid')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('quick-actions-grid')[22m
+
+
+      50 |     await loginAsAdmin(page);
+      51 |
+    > 52 |     await expect(page.getByTestId("quick-actions-grid")).toBeVisible();
+         |                                                          ^
+      53 |     await expect(page.locator("[data-testid^='quick-action-']")).toHaveCount(6);
+      54 |
+      55 |     await page.getByTestId("stats-card-students").click();
+        at /home/neo/Music/bd-gps/tests/e2e/dashboard/navigation.spec.ts:52:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/dashboard-navigation-Dashb-1eeb9-rd-taps-route-to-CRUD-pages-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/dashboard-navigation-Dashb-1eeb9-rd-taps-route-to-CRUD-pages-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/dashboard-navigation-Dashb-1eeb9-rd-taps-route-to-CRUD-pages-chromium/error-context.md
+
+  6) [chromium] › tests/e2e/dashboard/navigation.spec.ts:62:3 › Dashboard responsive navigation › shows back-to-top FAB after scrolling and returns to top 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('scroll-top-fab')[22m
+    [2m    - locator resolved to <button title="Back to top" aria-label="Scroll to top" data-testid="scroll-top-fab" class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/25 bg-primary/10 text-primary shadow-lg backdrop-blur-md transition-all hover:bg-primary hover:text-white active:scale-90 pointer-events-none translate-y-2 opacity-0">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed bottom-24 right-5 z-40 flex flex-col gap-3 lg:hidden">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed bottom-24 right-5 z-40 flex flex-col gap-3 lg:hidden">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    21 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed bottom-24 right-5 z-40 flex flex-col gap-3 lg:hidden">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      73 |     const scrollFab = page.getByTestId("scroll-top-fab");
+      74 |     await expect(scrollFab).toBeVisible();
+    > 75 |     await scrollFab.click();
+         |                     ^
+      76 |     await page.waitForTimeout(600);
+      77 |
+      78 |     const scrollTop = await main.evaluate((el) => el.scrollTop);
+        at /home/neo/Music/bd-gps/tests/e2e/dashboard/navigation.spec.ts:75:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/dashboard-navigation-Dashb-21829-crolling-and-returns-to-top-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/dashboard-navigation-Dashb-21829-crolling-and-returns-to-top-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/dashboard-navigation-Dashb-21829-crolling-and-returns-to-top-chromium/error-context.md
+
+  7) [chromium] › tests/e2e/finance/payment.spec.ts:9:3 › Finance Dashboard › finance page renders summary and table 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Finance' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Finance' })[22m
+
+
+      10 |     await page.goto("/dashboard/finance", { waitUntil: "domcontentloaded" });
+      11 |
+    > 12 |     await expect(page.getByRole("heading", { name: "Finance" })).toBeVisible();
+         |                                                                  ^
+      13 |     await expect(page.getByText("Total Billed")).toBeVisible();
+      14 |     await expect(page.getByText("Collected")).toBeVisible();
+      15 |     await expect(page.getByText("Outstanding")).toBeVisible();
+        at /home/neo/Music/bd-gps/tests/e2e/finance/payment.spec.ts:12:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/finance-payment-Finance-Da-5299c-e-renders-summary-and-table-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/finance-payment-Finance-Da-5299c-e-renders-summary-and-table-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/finance-payment-Finance-Da-5299c-e-renders-summary-and-table-chromium/error-context.md
+
+  8) [chromium] › tests/e2e/landing/landing.spec.ts:36:3 › Landing page › renders owner super admin sign-in panel 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveValue[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByLabel('Owner username')
+    Expected: [32m"Yusuf_Ali"[39m
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toHaveValue" with timeout 15000ms[22m
+    [2m  - waiting for getByLabel('Owner username')[22m
+
+
+      42 |       }),
+      43 |     ).toBeVisible();
+    > 44 |     await expect(page.getByLabel("Owner username")).toHaveValue("Yusuf_Ali");
+         |                                                     ^
+      45 |     await expect(page.getByLabel("Owner password")).toBeVisible();
+      46 |   });
+      47 | });
+        at /home/neo/Music/bd-gps/tests/e2e/landing/landing.spec.ts:44:53
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/landing-landing-Landing-pa-c242a-r-super-admin-sign-in-panel-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/landing-landing-Landing-pa-c242a-r-super-admin-sign-in-panel-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/landing-landing-Landing-pa-c242a-r-super-admin-sign-in-panel-chromium/error-context.md
+
+  9) [chromium] › tests/e2e/perf-regression.spec.ts:7:3 › Performance Regression Checks › hamburger menu opens within performance target 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('#hamburger-menu-trigger')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('#hamburger-menu-trigger')[22m
+
+
+      10 |
+      11 |     const trigger = page.locator("#hamburger-menu-trigger");
+    > 12 |     await expect(trigger).toBeVisible();
+         |                           ^
+      13 |
+      14 |     // Measure time to open
+      15 |     const start = Date.now();
+        at /home/neo/Music/bd-gps/tests/e2e/perf-regression.spec.ts:12:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/perf-regression-Performanc-0d60e-s-within-performance-target-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/perf-regression-Performanc-0d60e-s-within-performance-target-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/perf-regression-Performanc-0d60e-s-within-performance-target-chromium/error-context.md
+
+  9 failed
+    [chromium] › tests/e2e/academics/student.spec.ts:9:3 › Academic Route Smoke › students page renders 
+    [chromium] › tests/e2e/academics/student.spec.ts:18:3 › Academic Route Smoke › teachers page renders 
+    [chromium] › tests/e2e/academics/student.spec.ts:26:3 › Academic Route Smoke › classes page renders tabs 
+    [chromium] › tests/e2e/academics/student.spec.ts:34:3 › Academic Route Smoke › attendance page renders 
+    [chromium] › tests/e2e/dashboard/navigation.spec.ts:46:3 › Dashboard responsive navigation › keeps quick actions compact and card taps route to CRUD pages 
+    [chromium] › tests/e2e/dashboard/navigation.spec.ts:62:3 › Dashboard responsive navigation › shows back-to-top FAB after scrolling and returns to top 
+    [chromium] › tests/e2e/finance/payment.spec.ts:9:3 › Finance Dashboard › finance page renders summary and table 
+    [chromium] › tests/e2e/landing/landing.spec.ts:36:3 › Landing page › renders owner super admin sign-in panel 
+    [chromium] › tests/e2e/perf-regression.spec.ts:7:3 › Performance Regression Checks › hamburger menu opens within performance target 
+  20 passed (15.0m)
+ ELIFECYCLE  Command failed with exit code 1.

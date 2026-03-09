@@ -44,6 +44,24 @@ const DEMO_USERS = [
     name: "Dr. Sarah Chen",
     role: "PRINCIPAL",
   },
+  {
+    email: "teacher.demo@school.edu",
+    password: "teacher123",
+    name: "Demo Teacher",
+    role: "TEACHER",
+  },
+  {
+    email: "student.demo@school.edu",
+    password: "student123",
+    name: "Demo Student",
+    role: "STUDENT",
+  },
+  {
+    email: "parent.demo@school.edu",
+    password: "parent123",
+    name: "Demo Parent",
+    role: "PARENT",
+  },
 ] as const;
 
 const OWNER_CONTROL_INSTITUTION = {
@@ -529,6 +547,7 @@ const providers: any[] = [
       }
 
       const normalizedIdentifier = normalizeEmail(identifierInput);
+
       let user = await db.user.findFirst({
         where: {
           OR: [

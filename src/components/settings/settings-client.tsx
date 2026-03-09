@@ -953,7 +953,7 @@ function AccessRequestsTab({ canReview }: { canReview: boolean }) {
         <div className="space-y-1">
           <Label>Status</Label>
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-full min-w-0 sm:w-[160px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -968,7 +968,7 @@ function AccessRequestsTab({ canReview }: { canReview: boolean }) {
         <div className="space-y-1">
           <Label>Scope</Label>
           <Select value={scope} onValueChange={setScope}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-full min-w-0 sm:w-[160px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -980,7 +980,7 @@ function AccessRequestsTab({ canReview }: { canReview: boolean }) {
           </Select>
         </div>
 
-        <div className="space-y-1 flex-1 min-w-[200px]">
+        <div className="space-y-1 min-w-0 flex-[1_1_220px] sm:min-w-[200px]">
           <Label>Search</Label>
           <Input
             value={query}
@@ -995,7 +995,7 @@ function AccessRequestsTab({ canReview }: { canReview: boolean }) {
             type="date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-            className="w-[165px]"
+            className="w-full min-w-0 sm:w-[165px]"
           />
         </div>
 
@@ -1005,7 +1005,7 @@ function AccessRequestsTab({ canReview }: { canReview: boolean }) {
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            className="w-[165px]"
+            className="w-full min-w-0 sm:w-[165px]"
           />
         </div>
 
@@ -1149,7 +1149,7 @@ export function SettingsClient({
         }
       />
       <Tabs value={activeTab} onValueChange={setTab}>
-        <TabsList className="mb-6 w-full sm:w-auto">
+        <TabsList className="mb-6 w-full overflow-x-auto sm:w-auto">
           <TabsTrigger value="profile" className="gap-1.5">
             <Building2 className="h-3.5 w-3.5" />
             {govtPrimaryMode ? "School Profile" : "Profile"}

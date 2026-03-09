@@ -9,7 +9,7 @@ export default async function PendingApprovalPage({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
-      <div className="w-full max-w-lg rounded-xl border border-border bg-card p-8 text-center shadow-sm">
+      <div className="w-full max-w-lg rounded-xl border border-border bg-card p-4 text-center shadow-sm sm:p-8">
         <h1 className="text-2xl font-bold tracking-tight">Approval Pending</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Your request for {params.scope ?? "role"} access at{" "}

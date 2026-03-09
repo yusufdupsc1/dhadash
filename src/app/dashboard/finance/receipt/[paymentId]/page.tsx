@@ -92,7 +92,7 @@ export default async function ReceiptPrintPage({ params }: PageProps) {
         ) : null}
       </header>
 
-      <section className="mb-4 grid grid-cols-2 gap-2 text-sm">
+      <section className="mb-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
         <p>
           <span className="font-semibold">রশিদ নং:</span>{" "}
           {payment.receiptNumber ?? "N/A"}

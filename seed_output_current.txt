@@ -1,0 +1,35 @@
+
+> bd-gps@2.0.3 db:seed /home/neo/Music/bd-gps
+> tsx prisma/seed.ts
+
+🌱 Seeding BD-GPS database...
+
+✅ Institution: BD-GPS Govt Primary Demo School
+✅ Admin user: admin@school.edu
+✅ Super admin user: superadmin@school.edu
+✅ Owner super admin: yusuf_ali
+✅ Principal user: principal@school.edu
+✅ Subjects: 6
+✅ Classes: 6
+✅ Teachers: 6
+✅ Teacher user: teacher.demo@school.edu
+✅ Student user: student.demo@school.edu
+✅ Parent user: parent.demo@school.edu
+✅ Students: 60
+✅ Attendance records seeded
+✅ Grades seeded for 30 students
+✅ Fees seeded for 50 students
+✅ Events: 4
+✅ Announcements seeded
+✅ Demo placeholder records seeded for 18 students
+
+🎉 Seeding complete!
+
+Demo credentials:
+  SuperAdmin: superadmin@school.edu / superadmin123
+  Admin:     admin@school.edu / admin123
+  Principal: principal@school.edu / principal123
+  Teacher:   teacher.demo@school.edu / teacher123
+  Student:   student.demo@school.edu / student123
+  Parent:    parent.demo@school.edu / parent123
+  Owner:     yusuf_ali / yusuf_ali

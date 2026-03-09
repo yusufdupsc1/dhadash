@@ -37,7 +37,10 @@ export function SuperAdminAccess() {
           </p>
         </div>
 
-        <form action={ownerSignInAction} className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+        <form
+          action={ownerSignInAction}
+          className="grid gap-3 md:grid-cols-[1fr_1fr_auto]"
+        >
           <input
             type="text"
             name="username"
@@ -58,7 +61,7 @@ export function SuperAdminAccess() {
           />
           <button
             type="submit"
-            className="primary-cta inline-flex h-11 items-center justify-center rounded-md px-5 text-sm font-bold"
+            className="primary-cta inline-flex h-11 w-full items-center justify-center rounded-md px-5 text-sm font-bold md:w-auto"
           >
             <LockKeyhole className="mr-2 h-4 w-4" />
             Central Super Admin Sign In

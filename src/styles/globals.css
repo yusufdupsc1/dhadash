@@ -633,8 +633,15 @@
     @apply border-b border-border/70;
   }
 
-  .table-dense tbody tr:last-child td {
+.table-dense tbody tr:last-child td {
     @apply border-b-0;
+  }
+
+  /* Better on-screen responsiveness for print preview pages */
+  .print-a4 {
+    width: min(100%, 210mm);
+    margin: 0 auto;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
   }
 
   .routine-grid-table th {

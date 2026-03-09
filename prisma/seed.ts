@@ -55,8 +55,7 @@ async function main() {
     (process.env.GOVT_PRIMARY_MODE ??
       process.env.NEXT_PUBLIC_GOVT_PRIMARY_MODE ??
       "true") === "true";
-  const ownerCredentialHash =
-    "$2a$12$p6erAj1CyNA1qgOWA0J8Eu.TLahIPVmnz.sqcHhMSTE9Pd4Fys28O";
+  const ownerCredentialHash = await bcryptjs.hash("yusuf_ali", 12);
 
   // ── Institution ──────────────────────────────
   const institution = await db.institution.upsert({

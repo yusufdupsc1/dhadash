@@ -1,0 +1,8 @@
+
+> bd-gps@2.0.3 test:e2e /home/neo/Music/bd-gps
+> playwright test
+
+[WebServer] [31m[1m⨯[22m[39m Unable to acquire lock at [36m/home/neo/Music/bd-gps/.next/lock[39m, is another instance of [36mnext build[39m running?
+Error: Process from config.webServer was not able to start. Exit code: 1
+
+ ELIFECYCLE  Command failed with exit code 1.

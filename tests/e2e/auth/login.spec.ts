@@ -5,15 +5,8 @@ test.describe("Authentication Flows", () => {
   test("login page renders core fields", async ({ page }) => {
     await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
 
-    await expect(
-      page.locator(".govt-top-band__segment--center .govt-top-band__title"),
-    ).toHaveText(/গণপ্রজাতন্ত্রী বাংলাদেশ সরকার/i);
-    await expect(
-      page.getByRole("heading", { name: "Welcome back" }),
-    ).toBeVisible();
-    await expect(
-      page.getByLabel("School Code (optional for Admin)"),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Admin Login" })).toBeVisible();
+    await expect(page.getByLabel(/School Code/i).first()).toBeVisible();
     await expect(page.getByLabel("Email address")).toBeVisible();
     await expect(page.getByLabel("Password")).toBeVisible();
     await expect(page.getByRole("button", { name: "Sign in" })).toBeVisible();
@@ -22,6 +15,7 @@ test.describe("Authentication Flows", () => {
   test("invalid credentials show error", async ({ page }) => {
     await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
 
+    await page.getByLabel(/School Code/i).first().fill("bd-gps");
     await page.getByLabel("Email address").fill("invalid@example.com");
     await page.getByLabel("Password").fill("wrongpassword");
     await page.getByRole("button", { name: "Sign in" }).click();
@@ -46,8 +40,8 @@ test.describe("Authentication Flows", () => {
     await expect(logoutButton).toBeVisible();
     await logoutButton.click();
 
-    await page.waitForURL("**/auth/login", { timeout: 60000 });
-    await expect(page).toHaveURL(/\/auth\/login$/);
+    await page.waitForURL("**/auth/login/admin", { timeout: 60000 });
+    await expect(page).toHaveURL(/\/auth\/login\/admin$/);
     expect(page.url()).not.toContain("www.bd-gps-gps.vercel.app");
   });
 
@@ -88,9 +82,15 @@ test.describe("Authentication Flows", () => {
   test("owner super admin can sign in from landing panel", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
-    await page.getByLabel("Owner username").fill("Yusuf_Ali");
-    await page.getByLabel("Owner password").fill("19Kusum@yusuf");
-    await page.getByRole("button", { name: "Owner Sign In" }).click();
+    await page
+      .getByLabel("Central super admin username")
+      .fill("yusuf_ali");
+    await page
+      .getByLabel("Central super admin password")
+      .fill("yusuf_ali");
+    await page
+      .getByRole("button", { name: "Central Super Admin Sign In" })
+      .click();
 
     await page.waitForURL("**/dashboard/owner", { timeout: 60000 });
     await expect(page).toHaveURL(/\/dashboard\/owner$/);
@@ -102,10 +102,10 @@ test.describe("Authentication Flows", () => {
   test("owner super admin can sign in from auth login form with username", async ({
     page,
   }) => {
-    await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
+    await page.goto("/auth/login/owner", { waitUntil: "domcontentloaded" });
 
-    await page.getByLabel("Email address").fill("Yusuf_Ali");
-    await page.getByLabel("Password").fill("19Kusum@yusuf");
+    await page.getByLabel("Email address").fill("yusuf_ali");
+    await page.getByLabel("Password").fill("yusuf_ali");
     await page.getByRole("button", { name: "Sign in" }).click();
 
     await page.waitForURL("**/dashboard/owner", { timeout: 60000 });
