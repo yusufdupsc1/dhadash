@@ -1,7 +1,9 @@
-import { db } from "@/lib/db";
-import * as bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { db } from "@/lib/db";
+import * as bcrypt from "bcryptjs";
+
+export const runtime = "nodejs";
 
 const DEMO_INSTITUTION = {
   slug: "bd-gps",
@@ -57,9 +59,9 @@ async function ensureDemoUser(email: string, password: string, name: string, rol
   return { ...user, institution: { name: institution.name, slug: institution.slug } };
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const authConfig = {
   trustHost: true,
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt" as const },
   pages: { signIn: "/auth/login/admin" },
   providers: [
     Credentials({
@@ -75,33 +77,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const password = credentials?.password as string;
 
         if (!institutionSlug || !email || !password) {
-          console.error("[auth] Missing credentials", { institutionSlug, email: !!email, password: !!password });
           return null;
         }
 
-        // Only allow demo institution for now
         if (institutionSlug !== DEMO_INSTITUTION.slug) {
-          console.error("[auth] Invalid institution", institutionSlug);
           return null;
         }
 
-        // Find demo user
         const demoUser = DEMO_USERS.find(u => u.email.toLowerCase() === email);
-        if (!demoUser) {
-          console.error("[auth] Demo user not found", email);
+        if (!demoUser || demoUser.password !== password) {
           return null;
         }
 
-        // Verify password
-        if (demoUser.password !== password) {
-          console.error("[auth] Invalid password", email);
-          return null;
-        }
-
-        // Ensure user exists in database
         try {
           const user = await ensureDemoUser(demoUser.email, demoUser.password, demoUser.name, demoUser.role);
-          console.log("[auth] Demo login success", email);
           
           return {
             id: user.id,
@@ -113,7 +102,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             institutionSlug: DEMO_INSTITUTION.slug,
           };
         } catch (error) {
-          console.error("[auth] Database error", error);
+          console.error("[auth] Error:", error);
           return null;
         }
       },
@@ -132,8 +121,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.sub;
-        (token as any).role = (token as any).role || "ADMIN";
-        (session.user as any).role = (token as any).role;
+        (session.user as any).role = (token as any).role || "ADMIN";
         (session.user as any).institutionId = (token as any).institutionId;
         (session.user as any).institutionName = (token as any).institutionName;
         (session.user as any).institutionSlug = (token as any).institutionSlug;
@@ -141,4 +129,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-});
+};
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
